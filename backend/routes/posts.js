@@ -11,12 +11,10 @@ router.route("/").get((req, res) => {
 // 게시글 생성
 router.route("/").post((req, res) => {
   const { title, contents } = req.body;
-  const date = Date.parse(req.body.date);
 
   const newPost = new Post({
     title,
     contents,
-    date,
   });
 
   newPost
@@ -40,12 +38,11 @@ router.route("/:id").delete((req, res) => {
 });
 
 // 게시글 수정
-router.route("/update/:id").post((req, res) => {
+router.route("/:id").post((req, res) => {
   Post.findById(req.params.id)
     .then((post) => {
       post.title = req.body.title;
       post.contents = req.body.contents;
-      post.date = Date.parse(req.body.date);
 
       post
         .save()
