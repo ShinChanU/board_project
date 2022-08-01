@@ -17,8 +17,10 @@ connection.once("open", () => {
 });
 
 const postsRouter = require("./routes/posts");
+const authRouter = require("./routes/auth");
 
 app.use("/posts", postsRouter);
+app.use("/auth", authRouter);
 
 app.listen(port, () => {
   console.log(`Server is running on port: ${port}`);

@@ -1,5 +1,5 @@
 const router = require("express").Router();
-let Post = require("../models/post.model");
+let Post = require("../models/post.models");
 
 // 모든 게시글 조회
 router.route("/").get((req, res) => {
