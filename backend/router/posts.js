@@ -17,6 +17,8 @@ router.route("/").post((req, res) => {
     contents,
   });
 
+  console.log(newPost);
+
   newPost
     .save()
     .then(() => res.json("post create!"))
