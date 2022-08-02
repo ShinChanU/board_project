@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 const Schema = mongoose.Schema;
 
@@ -9,22 +10,41 @@ const UserSchema = new Schema({
   companyCode: String,
 });
 
+// 비밀번호 해쉬값으로 설정
 UserSchema.methods.setPassword = async function (password) {
   const hash = await bcrypt.hash(password, 10);
   this.password = hash;
 };
 
+// 비밀번호 확인
 UserSchema.methods.checkPassword = async function (password) {
   const result = await bcrypt.compare(password, this.password);
   return result;
 };
 
+// 반환 데이터에서 비밀번호 삭제
 UserSchema.methods.serialize = function () {
   const data = this.toJSON();
   delete data.password;
   return data;
 };
 
+//
+UserSchema.methods.generateToken = function () {
+  const token = jwt.sign(
+    {
+      _id: this.id,
+      username: this.username,
+    },
+    process.env.JWT_SECRET,
+    {
+      expiresIn: "7d",
+    }
+  );
+  return token;
+};
+
+// 아이디 찾기
 UserSchema.statics.findByUsername = function (username) {
   return this.findOne({ username });
 };

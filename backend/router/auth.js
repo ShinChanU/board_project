@@ -36,6 +36,13 @@ router.route("/register").post(async (req, res) => {
     }
     await user.setPassword(password);
     let resultUser = user.serialize();
+
+    const token = user.generateToken();
+    res.cookie("accessToken", token, {
+      maxAge: 1000 * 60 * 60 * 24 * 7,
+      httpOnly: true,
+    });
+
     await user.save();
     res.status(201).send(resultUser);
   } catch (error) {
@@ -70,6 +77,13 @@ router.route("/login").post(async (req, res) => {
       return;
     }
     const result = user.serialize();
+
+    const token = user.generateToken();
+    res.cookie("accessToken", token, {
+      maxAge: 1000 * 60 * 60 * 24 * 7,
+      httpOnly: true,
+    });
+
     res.status(200).json(result);
     return;
   } catch (e) {
@@ -77,9 +91,26 @@ router.route("/login").post(async (req, res) => {
   }
 });
 
-router.route("/check").get((req, res) => {});
+router.route("/check").get((req, res) => {
+  const { user } = res;
+  if (!user) {
+    res.status(401).json({
+      message: "jwt이 없습니다",
+      httpStatus: 401,
+    });
+  }
+  res.json({
+    user,
+    httpStatus: 200,
+  });
+});
 
-router.route("/logout").post((req, res) => {});
+router.route("/logout").post((req, res) => {
+  res.cookie("accessToken");
+  res.json({
+    httpStatus: 204,
+  });
+});
 
 module.exports = router;
 
