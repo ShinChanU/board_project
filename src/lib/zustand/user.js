@@ -1,5 +1,18 @@
 import create from 'zustand';
 import * as authAPI from 'lib/api/auth';
+import { persist } from 'zustand/middleware';
+
+export const userInfoStore = create(
+  persist(
+    (set, get) => ({
+      user: null,
+    }),
+    {
+      name: 'user',
+      getStorage: () => sessionStorage,
+    },
+  ),
+);
 
 export const userStore = create((set, get) => ({
   login: {
@@ -50,7 +63,6 @@ export const userStore = create((set, get) => ({
 
   signupCheck: null,
   loginCheck: null,
-  user: null,
 
   onChangeAuth: (form, name, val) => {
     set({ error: '' });
@@ -87,10 +99,22 @@ export const userStore = create((set, get) => ({
     } else {
       let res = await authAPI.postLogin(authForm);
       if (res.status === 200) {
-        set({ user: res.data });
+        userInfoStore.setState({ user: res.data });
         set({ loginCheck: true });
       } else set({ error: res.data.message });
       return;
+    }
+  },
+
+  checkAuth: async () => {
+    let res = await authAPI.checkUser();
+    console.log(res);
+  },
+
+  logout: async () => {
+    let res = await authAPI.Logout();
+    if (res.status === 200) {
+      userInfoStore.setState({ user: null });
     }
   },
 }));
