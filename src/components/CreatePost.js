@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import styled from "styled-components";
+import React, { useEffect, useState } from 'react';
+import styled from 'styled-components';
 
 const Container = styled.div`
   width: 70%;
@@ -31,10 +31,10 @@ const Button = styled.button`
 
 const CreatePost = ({ createPostData, data, open }) => {
   const [input, setInput] = useState({
-    title: "",
-    contents: "",
+    title: '',
+    contents: '',
   });
-  const [status, setStatus] = useState("new");
+  const [status, setStatus] = useState('new');
 
   const onChange = (e) => {
     setInput({
@@ -50,14 +50,15 @@ const CreatePost = ({ createPostData, data, open }) => {
         title,
         contents,
       });
-      setStatus("update");
+      setStatus('update');
     } else {
       setInput({
-        title: "",
-        contents: "",
+        title: '',
+        contents: '',
       });
-      setStatus("new");
+      setStatus('new');
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -71,7 +72,7 @@ const CreatePost = ({ createPostData, data, open }) => {
         <TextArea name="contents" value={input.contents} onChange={onChange} />
       </Div>
       <Button onClick={() => createPostData(input, data)}>
-        {status === "update" ? "수정" : "저장"}
+        {status === 'update' ? '수정' : '저장'}
       </Button>
     </Container>
   );

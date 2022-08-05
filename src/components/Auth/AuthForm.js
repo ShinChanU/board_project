@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 import OpenColor from 'open-color';
-import { userStore } from 'lib/zustand/user';
+import { userInfoStore, userStore } from 'lib/zustand/user';
 
 const AuthContainer = styled.div`
   min-height: 100vh;
@@ -111,9 +111,10 @@ const AuthForm = ({ type, authForm }) => {
     onSubmitAuth,
     error,
     signupCheck,
-    user,
     loginCheck,
+    checkAuth,
   } = userStore();
+  const { user } = userInfoStore();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -138,9 +139,10 @@ const AuthForm = ({ type, authForm }) => {
     if (loginCheck) {
       alert('로그인이 완료되었습니다.');
       initAuthForm(type);
+      checkAuth();
       return;
     }
-  }, [signupCheck, navigate, initAuthForm, type, loginCheck]);
+  }, [signupCheck, navigate, initAuthForm, type, checkAuth, loginCheck]);
 
   return (
     <AuthContainer>
