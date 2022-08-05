@@ -1,13 +1,19 @@
-const mongoose = require("mongoose");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
+const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 const Schema = mongoose.Schema;
 
 const UserSchema = new Schema({
-  username: String,
-  password: String,
-  companyCode: String,
+  username: { type: String, required: true },
+  password: { type: String, required: true },
+  companyCode: { type: String, required: true },
+  realName: { type: String, required: true },
+  userType: {
+    type: String,
+    enum: ['user', 'top'],
+    default: 'user',
+  },
 });
 
 // 비밀번호 해쉬값으로 설정
@@ -35,11 +41,13 @@ UserSchema.methods.generateToken = function () {
     {
       _id: this.id,
       username: this.username,
+      companyCode: this.companyCode,
+      userType: this.userType,
     },
     process.env.JWT_SECRET,
     {
-      expiresIn: "7d",
-    }
+      expiresIn: '7d',
+    },
   );
   return token;
 };
@@ -49,6 +57,6 @@ UserSchema.statics.findByUsername = function (username) {
   return this.findOne({ username });
 };
 
-const User = mongoose.model("User", UserSchema);
+const User = mongoose.model('User', UserSchema);
 
 module.exports = User;

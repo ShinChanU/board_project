@@ -7,9 +7,11 @@ import styled from 'styled-components';
 import NavBar from 'components/NavBar';
 import BoardPage from 'pages/BoardPage';
 import MyPage from 'pages/MyPage';
+import OpenColor from 'open-color';
 
 const Container = styled.div`
   min-height: 100vh;
+  background: ${OpenColor.violet[1]};
 `;
 
 const Header = styled(Link)`

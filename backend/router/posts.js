@@ -1,57 +1,78 @@
-const router = require("express").Router();
-let Post = require("../models/post.models");
+const router = require('express').Router();
+let Post = require('../models/post.models');
 
-// 모든 게시글 조회
-router.route("/").get((req, res) => {
-  Post.find()
-    .then((posts) => res.json(posts))
-    .catch((err) => res.status(400).json("Error: " + err));
+const checkJwt = (res) => {
+  const { user } = res;
+  if (!user) return 0;
+  return user;
+};
+
+// userType별 게시글 조회
+router.route('/').get((req, res) => {
+  const resJwt = checkJwt(res);
+  if (resJwt) {
+    const { userType, companyCode } = resJwt;
+    if (userType === 'top') {
+      // 전체 게시글 조회: 최상위 회사
+      Post.find()
+        .then((posts) => res.json(posts))
+        .catch((err) => res.status(400).json('Error: ' + err));
+    } else if (userType === 'user') {
+      // 본인 회사만 조회
+      Post.find({ companyCode: companyCode })
+        .then((posts) => res.json(posts))
+        .catch((err) => res.status(400).json('Error: ' + err));
+    } else {
+      console.log('userType Error');
+      return 0;
+    }
+  }
 });
 
 // 게시글 생성
-router.route("/").post((req, res) => {
-  const { title, contents } = req.body;
+router.route('/').post((req, res) => {
+  const { title, body, author, companyCode } = req.body;
 
   const newPost = new Post({
     title,
-    contents,
+    body,
+    author,
+    companyCode,
   });
-
-  console.log(newPost);
 
   newPost
     .save()
-    .then(() => res.json("post create!"))
-    .catch((err) => res.status(400).json("Error: " + err));
+    .then(() => res.json('post create!'))
+    .catch((err) => res.status(400).json('Error: ' + err));
 });
 
 // 게시글 조회
-router.route("/:id").get((req, res) => {
+router.route('/:id').get((req, res) => {
   Post.findById(req.params.id)
     .then((post) => res.json(post))
-    .catch((err) => res.status(400).json("Error: " + err));
+    .catch((err) => res.status(400).json('Error: ' + err));
 });
 
 // 게시글 삭제
-router.route("/:id").delete((req, res) => {
+router.route('/:id').delete((req, res) => {
   Post.findByIdAndDelete(req.params.id)
-    .then(() => res.json("Post deleted."))
-    .catch((err) => res.status(400).json("Error: " + err));
+    .then(() => res.json('Post deleted.'))
+    .catch((err) => res.status(400).json('Error: ' + err));
 });
 
 // 게시글 수정
-router.route("/:id").post((req, res) => {
+router.route('/:id').post((req, res) => {
   Post.findById(req.params.id)
     .then((post) => {
       post.title = req.body.title;
-      post.contents = req.body.contents;
+      post.body = req.body.body;
 
       post
         .save()
-        .then(() => res.json("post updated!"))
-        .catch((err) => res.status(400).json("Error: " + err));
+        .then(() => res.json('post updated!'))
+        .catch((err) => res.status(400).json('Error: ' + err));
     })
-    .catch((err) => res.status(400).json("Error: " + err));
+    .catch((err) => res.status(400).json('Error: ' + err));
 });
 
 module.exports = router;

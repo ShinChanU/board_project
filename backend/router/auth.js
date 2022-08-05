@@ -7,6 +7,8 @@ router.route('/register').post(async (req, res) => {
     username: Joi.string().alphanum().min(3).max(20).required(),
     password: Joi.string().alphanum().required(),
     companyCode: Joi.string().required(),
+    realName: Joi.string().required(),
+    userType: Joi.string(),
   });
 
   const result = schema.validate(req.body);
@@ -18,11 +20,13 @@ router.route('/register').post(async (req, res) => {
     return;
   }
 
-  const { username, password, companyCode } = req.body;
+  const { username, password, companyCode, realName, userType } = req.body;
 
   const user = new User({
     username,
     companyCode,
+    realName,
+    userType,
   });
 
   try {
@@ -85,7 +89,6 @@ router.route('/login').post(async (req, res) => {
       maxAge: 1000 * 60 * 60 * 24 * 7,
       httpOnly: true,
     });
-    console.log(token);
     res.status(200).json(result);
     return;
   } catch (e) {
