@@ -9,7 +9,7 @@ const AuthContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: ${OpenColor.violet[1]};
+  /* background: ${OpenColor.violet[1]}; */
 `;
 
 const Container = styled.div`
