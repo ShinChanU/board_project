@@ -11,10 +11,9 @@ const bodySchema = new Schema({
 });
 
 const postSchema = new Schema({
-  title: { type: String, required: true },
-  body: bodySchema,
-  author: { type: mongoose.Schema.Types.ObjectId, ref: 'user', required: true },
   companyCode: { type: String, required: true },
+  author: { type: mongoose.Schema.Types.ObjectId, ref: 'user', required: true },
+  body: bodySchema,
   createdAt: { type: Date, default: Date.now },
   updatedAt: Date,
 });

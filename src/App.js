@@ -21,7 +21,7 @@ const Header = styled(Link)`
   justify-content: center;
   font-weight: 700;
   font-size: 30px;
-  margin-top: 30px;
+  margin: 30px 0px;
 `;
 
 function App() {

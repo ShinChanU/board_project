@@ -44,6 +44,11 @@ export const userStore = create((set, get) => ({
       type: 'password',
       value: '',
     },
+    realName: {
+      placeHolder: '이름',
+      type: 'text',
+      value: '',
+    },
     companyCode: {
       placeHolder: '회사 코드',
       type: 'select',
