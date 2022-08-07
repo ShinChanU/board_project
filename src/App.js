@@ -6,12 +6,12 @@ import LoginPage from 'pages/LoginPage';
 import styled from 'styled-components';
 import NavBar from 'components/NavBar';
 import BoardPage from 'pages/BoardPage';
-import MyPage from 'pages/MyPage';
 import OpenColor from 'open-color';
+import Notice from 'components/Notice';
 
 const Container = styled.div`
   min-height: 100vh;
-  background: ${OpenColor.violet[1]};
+  background: ${OpenColor.indigo[1]};
 `;
 
 const Header = styled(Link)`
@@ -34,8 +34,8 @@ function App() {
           <Route path="/" element={<MainPage />}></Route>
           <Route path="/signup" element={<SignupPage />}></Route>
           <Route path="/login" element={<LoginPage />}></Route>
+          <Route path="/notice" element={<Notice />}></Route>
           <Route path="/board" element={<BoardPage />}></Route>
-          <Route path="/myPage" element={<MyPage />}></Route>
         </Routes>
       </Container>
     </BrowserRouter>
