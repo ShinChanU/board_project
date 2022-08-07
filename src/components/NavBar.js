@@ -5,7 +5,8 @@ import styled, { css } from 'styled-components';
 import oc from 'open-color';
 
 const Container = styled.div`
-  background: white;
+  background: ${oc.indigo[0]};
+  padding: 0px 30px;
 `;
 
 const Header = styled.header`
@@ -34,17 +35,17 @@ const TagStyle = css`
 const LinkDiv = styled(Link)`
   ${TagStyle};
   :hover {
-    color: ${oc.violet[3]};
+    color: ${oc.indigo[4]};
     transition: 0.3s;
   }
 `;
 
 const Button = styled.button`
   border: none;
-  background: white;
+  background: ${oc.indigo[0]};
   ${TagStyle};
   :hover {
-    color: ${oc.violet[3]};
+    color: ${oc.indigo[4]};
     transition: 0.3s;
   }
 `;
@@ -54,7 +55,7 @@ const Div = styled.div`
 `;
 
 const Span = styled.span`
-  color: ${oc.violet[6]};
+  color: ${oc.indigo[6]};
 `;
 
 const NavBar = () => {
@@ -75,8 +76,8 @@ const NavBar = () => {
             <Span>{user.realName}</Span> 님 환영합니다!
           </Div>
           <div>
-            <LinkDiv to="/myPage">내 기록</LinkDiv>
-            <LinkDiv to="/board">게시판</LinkDiv>
+            <LinkDiv to="/notice">📌공지사항</LinkDiv>
+            <LinkDiv to="/board">📈자료취합게시판</LinkDiv>
             <Button onClick={logout}>로그아웃</Button>
           </div>
         </Header>

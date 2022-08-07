@@ -4,6 +4,7 @@ body {
   padding: 0;
 }
 
-input {
+input,
+div {
   box-sizing: border-box;
 }

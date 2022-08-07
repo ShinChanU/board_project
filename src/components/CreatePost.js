@@ -3,7 +3,8 @@ import styled from 'styled-components';
 
 const Container = styled.div`
   width: 70%;
-  font-size: 30px;
+  font-size: 20px;
+  font-weight: 550;
   display: flex;
   flex-direction: column;
 `;
@@ -24,7 +25,9 @@ const TextArea = styled.textarea`
 `;
 
 const Button = styled.button`
-  font-size: 40px;
+  width: 80px;
+  margin: 0 auto;
+  font-size: 25px;
   border-radius: 20px;
   cursor: pointer;
 `;

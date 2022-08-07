@@ -9,14 +9,14 @@ const AuthContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: ${OpenColor.violet[1]};
+  background: ${OpenColor.indigo[1]};
 `;
 
 const Container = styled.div`
   margin-top: 70px;
   background: ${OpenColor.gray[1]};
   border-radius: 10px;
-  box-shadow: 0px 0px 4px ${OpenColor.violet[3]};
+  box-shadow: 0px 0px 4px ${OpenColor.indigo[3]};
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -72,10 +72,10 @@ const Button = styled.button`
   padding: 10px;
   border-radius: 10px;
   border: none;
-  background: ${OpenColor.violet[2]};
+  background: ${OpenColor.indigo[2]};
   color: white;
   :hover {
-    background: ${OpenColor.violet[3]};
+    background: ${OpenColor.indigo[3]};
     transition: 0.3s;
   }
 `;
