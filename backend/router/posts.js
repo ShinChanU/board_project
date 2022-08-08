@@ -28,10 +28,11 @@ router.route('/').get((req, res) => {
         .then((posts) => res.json(posts))
         .catch((err) => res.status(400).json('Error: ' + err));
     } else {
-      console.log('userType Error');
+      res.status(401).json('Type Error');
       return 0;
     }
   }
+  return 0;
 });
 
 // 게시글 생성

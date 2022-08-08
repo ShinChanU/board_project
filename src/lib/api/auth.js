@@ -1,11 +1,17 @@
 import axios from 'axios';
 
-export const postSignup = async ({ username, password, companyCode }) => {
+export const postSignup = async ({
+  username,
+  password,
+  companyCode,
+  realName,
+}) => {
   try {
     const res = await axios.post('http://localhost:5000/auth/register', {
       username: username.value,
       password: password.value,
       companyCode: companyCode.value,
+      realName: realName.value,
     });
     return res;
   } catch (e) {

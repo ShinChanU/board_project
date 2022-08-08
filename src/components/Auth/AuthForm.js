@@ -2,21 +2,21 @@ import React, { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 import OpenColor from 'open-color';
-import { userInfoStore, userStore } from 'lib/zustand/user';
+import { userInfoStore, userStore } from 'lib/zustand/userStore';
 
 const AuthContainer = styled.div`
-  min-height: 100vh;
+  /* min-height: 100vh; */
   display: flex;
   flex-direction: column;
   align-items: center;
-  /* background: ${OpenColor.violet[1]}; */
+  background: ${OpenColor.indigo[1]};
 `;
 
 const Container = styled.div`
   margin-top: 70px;
   background: ${OpenColor.gray[1]};
   border-radius: 10px;
-  box-shadow: 0px 0px 4px ${OpenColor.violet[3]};
+  box-shadow: 0px 0px 4px ${OpenColor.indigo[3]};
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -72,10 +72,10 @@ const Button = styled.button`
   padding: 10px;
   border-radius: 10px;
   border: none;
-  background: ${OpenColor.violet[2]};
+  background: ${OpenColor.indigo[2]};
   color: white;
   :hover {
-    background: ${OpenColor.violet[3]};
+    background: ${OpenColor.indigo[3]};
     transition: 0.3s;
   }
 `;

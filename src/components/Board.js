@@ -1,16 +1,16 @@
-import axios from "axios";
-import React, { useEffect, useState } from "react";
-import styled from "styled-components";
-import oc from "open-color";
-import Post from "./Post";
-import CreatePost from "./CreatePost";
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import styled from 'styled-components';
+import oc from 'open-color';
+import Post from './Post';
+import CreatePost from './CreatePost';
 
 const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  border: 1px solid ${oc.gray[3]};
-  background: ${oc.gray[6]};
+  /* border: 1px solid ${oc.gray[3]}; */
+  background: ${oc.violet[3]};
   border-radius: 10px;
   margin: 50px;
   min-height: 300px;
@@ -18,7 +18,7 @@ const Container = styled.div`
 `;
 
 const Title = styled.div`
-  font-size: 30px;
+  font-size: 25px;
   color: white;
   margin-bottom: 20px;
 `;
@@ -33,7 +33,7 @@ const Contents = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  font-size: 30px;
+  font-size: 20px;
 `;
 
 const Button = styled.button`
@@ -50,7 +50,8 @@ const Board = () => {
   const [data, setData] = useState(null);
 
   const getPostData = async () => {
-    let res = await axios.get("http://localhost:5000/posts/");
+    let res = await axios.get('http://localhost:5000/posts/');
+    console.log(res);
     if (res.status === 200) {
       setPost(res.data);
     }
@@ -66,7 +67,7 @@ const Board = () => {
 
   const createPostData = async (input, data) => {
     if (data === null) {
-      let res = await axios.post("http://localhost:5000/posts/", {
+      let res = await axios.post('http://localhost:5000/posts/', {
         title: input.title,
         contents: input.contents,
       });
@@ -89,6 +90,7 @@ const Board = () => {
 
   useEffect(() => {
     getPostData();
+    console.log(post);
   }, []);
 
   const onClickPostBtn = () => {
@@ -105,7 +107,7 @@ const Board = () => {
     <Container>
       <Title>게시판</Title>
       <Button onClick={onClickPostBtn}>
-        {createPost ? "닫기" : "게시글 작성"}
+        {createPost ? '닫기' : '게시글 작성'}
       </Button>
       {/* 게시글 작성 버튼 */}
       <Contents>
