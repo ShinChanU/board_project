@@ -10,7 +10,7 @@ const Article = ({ post, idx }) => {
       <td>공지</td>
       <td>{post.author.substr(0, 6)}</td>
       <td>{post.title}</td>
-      <td>{post.createdAt.substr(0, 10)}</td>
+      <td>{post.createdAt.substr(0, 16).replace('T', ' ')}</td>
       <td>{idx}</td>
     </Tr>
   );
