@@ -1,5 +1,10 @@
 const router = require('express').Router();
 let Post = require('../models/post.models');
+const multer = require('multer');
+
+const upload = multer({
+  dest: '../upload',
+});
 
 const checkJwt = (res) => {
   const { user } = res;
@@ -30,20 +35,23 @@ router.route('/').get((req, res) => {
 });
 
 // 게시글 생성
-router.route('/').post((req, res) => {
-  const { title, body, author, companyCode } = req.body;
+router.route('/').post(upload.single('file'), async (req, res) => {
+  const file = req.file.path;
+  console.log(file);
 
-  const newPost = new Post({
-    title,
-    body,
-    author,
-    companyCode,
-  });
+  // const { title, body, author, companyCode } = req.body;
 
-  newPost
-    .save()
-    .then(() => res.json('post create!'))
-    .catch((err) => res.status(400).json('Error: ' + err));
+  // const newPost = new Post({
+  //   title,
+  //   body,
+  //   author,
+  //   companyCode,
+  // });
+
+  // newPost
+  //   .save()
+  //   .then(() => res.json('post create!'))
+  //   .catch((err) => res.status(400).json('Error: ' + err));
 });
 
 // 게시글 조회

@@ -1,10 +1,11 @@
-const cookieParser = require('cookie-parser');
 const express = require('express');
+const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 require('dotenv').config();
 const jwtMiddleware = require('./lib/jwtMiddleware');
+const fs = require('fs');
 
 const app = express();
 const port = process.env.PORT || 5000;

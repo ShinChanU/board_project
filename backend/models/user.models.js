@@ -11,7 +11,7 @@ const UserSchema = new Schema({
   realName: { type: String, required: true },
   userType: {
     type: String,
-    enum: ['user', 'top'],
+    enum: ['user', 'top', 'admin'],
     default: 'user',
   },
 });
