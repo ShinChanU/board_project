@@ -1,11 +1,13 @@
 import axios from 'axios';
 
-export const createPostData = async ({ companyCode, author, body }) => {
+// 0809
+export const createPostData = async (data) => {
   try {
-    const res = await axios.post('/posts', {
-      companyCode,
-      author,
-      body,
+    const res = await axios({
+      method: 'post',
+      url: '/posts',
+      headers: { 'Content-Type': 'multipart/form-data' },
+      data,
     });
     return res;
   } catch (e) {
@@ -22,6 +24,7 @@ export const getPostData = async () => {
   }
 };
 
+// 0809
 export const getNoticePosts = async () => {
   try {
     const res = await axios.get('/posts');
@@ -40,6 +43,7 @@ export const delPostData = async (id) => {
   }
 };
 
+// 수정예정
 export const updatePostData = async (id, data) => {
   const { companyCode, author, body } = data;
   try {

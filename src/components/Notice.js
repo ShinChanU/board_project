@@ -1,8 +1,9 @@
 import { postStore } from 'lib/zustand/postStore';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import Article from './Borad/Article';
+import Article from './Board/Article';
 import oc from 'open-color';
+import WriteBoard from './Board/WriteBoard';
 
 const Container = styled.div`
   max-width: 1300px;
@@ -19,6 +20,19 @@ const FlexBox = styled.div`
   flex-direction: column;
   align-items: center;
   padding: 20px 30px;
+
+  > button {
+    background: ${oc.indigo[5]};
+    color: white;
+    border: none;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    width: 150px;
+    font-size: 17px;
+    font-weight: 550;
+    padding: 10px 0px;
+    cursor: pointer;
+  }
 `;
 
 const Header = styled.h1`
@@ -58,30 +72,39 @@ const Table = styled.table`
 const columns = ['번호', '분류', '작성자', '제목', '등록일', '조회수'];
 
 const Notice = () => {
-  const { noticePosts, getNoticePosts } = postStore();
+  const { noticePosts, getNoticePosts, postPosts } = postStore();
+  const [isWrite, setIsWrite] = useState(false);
 
   useEffect(() => {
     getNoticePosts();
   }, []);
 
+  const onChangeWrite = () => {
+    setIsWrite(!isWrite);
+  };
+
   return (
     <Container>
       <FlexBox>
         <Header>공지사항</Header>
-        <Table>
-          <thead>
-            <tr>
-              {columns.map((col) => (
-                <th key={col}>{col}</th>
+        <button onClick={onChangeWrite}>{isWrite ? '목록' : '글쓰기'}</button>
+        {isWrite && <WriteBoard close={onChangeWrite} postPosts={postPosts} />}
+        {!isWrite && (
+          <Table>
+            <thead>
+              <tr>
+                {columns.map((col) => (
+                  <th key={col}>{col}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {noticePosts.map((post, i) => (
+                <Article post={post} key={post._id} idx={i + 1} />
               ))}
-            </tr>
-          </thead>
-          <tbody>
-            {noticePosts.map((post, i) => (
-              <Article post={post} key={post._id} idx={i + 1} />
-            ))}
-          </tbody>
-        </Table>
+            </tbody>
+          </Table>
+        )}
       </FlexBox>
     </Container>
   );
