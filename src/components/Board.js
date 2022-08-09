@@ -9,8 +9,8 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  border: 1px solid ${oc.gray[3]};
-  background: ${oc.gray[6]};
+  /* border: 1px solid ${oc.gray[3]}; */
+  background: ${oc.violet[3]};
   border-radius: 10px;
   margin: 50px;
   min-height: 300px;
@@ -18,7 +18,7 @@ const Container = styled.div`
 `;
 
 const Title = styled.div`
-  font-size: 30px;
+  font-size: 25px;
   color: white;
   margin-bottom: 20px;
 `;
@@ -33,7 +33,7 @@ const Contents = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  font-size: 30px;
+  font-size: 20px;
 `;
 
 const Button = styled.button`

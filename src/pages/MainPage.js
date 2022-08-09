@@ -46,7 +46,7 @@ const MainPage = () => {
 
   return (
     <Container>
-      <Layout>
+      {/* <Layout>
         <Contents>
           <button>매출 등록하기</button>
           <Divs>
@@ -61,7 +61,7 @@ const MainPage = () => {
           세부 게시판
           <Board />
         </Contents>
-      </Layout>
+      </Layout> */}
     </Container>
   );
 };

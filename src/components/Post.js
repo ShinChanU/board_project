@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import styled, { css } from "styled-components";
+import React, { useState } from 'react';
+import styled, { css } from 'styled-components';
 
 const List = styled.div`
   width: 70%;
@@ -72,7 +72,7 @@ const Post = ({ index, data, delPostData, updateData }) => {
         <Num>{index + 1}</Num>
         <Title>{data.title}</Title>
         <Date>{data.updatedAt}</Date>
-        <Button onClick={onClickBtn}>{isOpen ? "닫기" : "펼치기"}</Button>
+        <Button onClick={onClickBtn}>{isOpen ? '닫기' : '펼치기'}</Button>
       </Div>
       {/* css 적용 필요 */}
       <Detail open={isOpen}>
