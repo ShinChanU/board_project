@@ -1,7 +1,15 @@
+import NoticeDetail from 'components/NoticeDetail';
+import NoticeMain from 'components/NoticeMain';
 import React from 'react';
+import { Route, Routes } from 'react-router-dom';
 
-const MyPage = () => {
-  return <div></div>;
+const NoticePage = () => {
+  return (
+    <Routes>
+      <Route element={<NoticeMain />} path="/" />
+      <Route element={<NoticeDetail />} path="/:id" />
+    </Routes>
+  );
 };
 
-export default MyPage;
+export default NoticePage;

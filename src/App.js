@@ -7,7 +7,7 @@ import styled from 'styled-components';
 import NavBar from 'components/NavBar';
 import BoardPage from 'pages/BoardPage';
 import OpenColor from 'open-color';
-import Notice from 'components/Notice';
+import NoticePage from 'pages/NoticePage';
 
 const Container = styled.div`
   min-height: 100vh;
@@ -31,11 +31,13 @@ function App() {
         <NavBar />
         <Header to="/">Web Project</Header>
         <Routes>
-          <Route path="/" element={<MainPage />}></Route>
-          <Route path="/signup" element={<SignupPage />}></Route>
-          <Route path="/login" element={<LoginPage />}></Route>
-          <Route path="/notice" element={<Notice />}></Route>
-          <Route path="/board" element={<BoardPage />}></Route>
+          {/* <Route path="/" element={<MainPage />}> */}
+          {/* 0809 회원인증 라우터 필요 */}
+          <Route path="/" element={<NoticePage />} />
+          <Route path="/signup" element={<SignupPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/notice/*" element={<NoticePage />} />
+          <Route path="/board" element={<BoardPage />} />
         </Routes>
       </Container>
     </BrowserRouter>

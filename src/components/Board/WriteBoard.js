@@ -88,7 +88,6 @@ const WriteBoard = ({ close, postPosts }) => {
     e.preventDefault();
     let formData = new FormData();
     for (let key in files) {
-      console.log(files[key]);
       formData.append('file', files[key]);
     }
     formData.append('data', JSON.stringify(post));
