@@ -1,7 +1,11 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
 const Tr = styled.tr``;
+const TitleTd = styled.td`
+  cursor: pointer;
+`;
 
 const Article = ({ post, idx }) => {
   return (
@@ -9,9 +13,13 @@ const Article = ({ post, idx }) => {
       <td>{idx}</td>
       <td>공지</td>
       <td>{post.author.substr(0, 6)}</td>
-      <td>{post.title}</td>
+      <TitleTd>
+        <Link to={process.env.PUBLIC_URL + `/notice/${post._id}`}>
+          {post.title}
+        </Link>
+      </TitleTd>
       <td>{post.createdAt.substr(0, 16).replace('T', ' ')}</td>
-      <td>{idx}</td>
+      <td>{post.views}</td>
     </Tr>
   );
 };

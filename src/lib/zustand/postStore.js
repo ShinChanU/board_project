@@ -7,6 +7,12 @@ export const postStore = create(
     (set, get) => ({
       noticePosts: [],
 
+      getDetailPost: async (id) => {
+        const res = await postAPI.getPost(id);
+        if (res.status === 200) return res.data;
+        else return 0;
+      },
+
       getNoticePosts: async () => {
         const res = await postAPI.getNoticePosts();
         if (res.status === 200) set({ noticePosts: res.data.reverse() });
