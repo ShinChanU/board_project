@@ -5,6 +5,8 @@ import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import NoticeTemplate from './NoticeTemplate';
 import * as XLSX from 'xlsx';
+import WriteBoard from './Board/WriteBoard.js';
+import { useNavigate } from 'react-router-dom';
 
 const Container = styled.div`
   width: 100%;
@@ -67,14 +69,17 @@ const Files = styled.div`
   margin-bottom: 20px;
 `;
 
-const NoticeDetail = () => {
+const NoticeDetail = ({ user, type }) => {
   const { id } = useParams();
-  const { getDetailPost } = postStore();
+  const { getDetailPost, removePost, postPosts } = postStore();
   const [post, setPost] = useState(null);
+  const { userType, username } = user;
+  const [isWrite, setIsWrite] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     (async () => {
-      let res = await getDetailPost(id);
+      let res = await getDetailPost('notice', id);
       setPost(res);
     })();
   }, [getDetailPost, id]);
@@ -91,10 +96,54 @@ const NoticeDetail = () => {
     }
   };
 
+  const onClickDelPost = async () => {
+    let res = await removePost(id);
+    if (res) {
+      alert('게시글이 삭제되었습니다.');
+      navigate(-1);
+    }
+  };
+
+  const onChangeWrite = () => {
+    setIsWrite(!isWrite);
+  };
+
+  const delSaveFile = (i) => {
+    let tmpOrgNames = post.orgFileName.slice();
+    let tmpSaveNames = post.saveFileName.slice();
+    tmpOrgNames.splice(i, 1);
+    tmpSaveNames.splice(i, 1);
+    setPost({
+      ...post,
+      orgFileName: tmpOrgNames,
+      saveFileName: tmpSaveNames,
+    });
+  };
+
   return (
     <NoticeTemplate>
+      {!isWrite && post && (
+        <>
+          {(post.author === username || username === 'admin') && (
+            <button onClick={onClickDelPost}>삭제하기</button>
+          )}
+          {post.author === username && (
+            <button onClick={onChangeWrite}>수정하기</button>
+          )}
+        </>
+      )}
+      {isWrite && (
+        <WriteBoard
+          close={onChangeWrite}
+          postPosts={postPosts}
+          user={user}
+          id={post._id}
+          postData={post}
+          deleteFile={delSaveFile}
+        />
+      )}
       <Container>
-        {post && (
+        {!isWrite && post && (
           <Contents>
             <Header>
               <Title>{post.title}</Title>
@@ -102,11 +151,14 @@ const NoticeDetail = () => {
                 <div>
                   <span>작성자</span> {post.author}
                 </div>
+                {post.author !== 'admin' && (
+                  <div>
+                    <span>회사코드</span> {post.companyCode}
+                  </div>
+                )}
                 <div>
-                  <span>회사코드/회사</span> {post.companyCode}
-                </div>
-                <div>
-                  <span>작성일</span> {post.createdAt}
+                  <span>작성일</span>{' '}
+                  {post.createdAt.substr(0, 16).replace('T', ' ')}
                 </div>
                 <div>
                   <span>조회수</span> {post.views}

@@ -130,8 +130,7 @@ export const userStore = create((set, get) => ({
   },
 
   checkAuth: async () => {
-    let res = await authAPI.checkUser();
-    console.log(res);
+    await authAPI.checkUser();
   },
 
   logout: async () => {

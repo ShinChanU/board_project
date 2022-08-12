@@ -1,14 +1,15 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
-// import MainPage from 'pages/MainPage';
+import MainPage from 'pages/MainPage';
 import SignupPage from 'pages/SignupPage';
 import LoginPage from 'pages/LoginPage';
 import styled from 'styled-components';
 import NavBar from 'components/NavBar';
-import BoardPage from 'pages/BoardPage';
+import DataBoardPage from 'pages/DataBoardPage';
 import OpenColor from 'open-color';
 import ProtectedRoute from 'lib/router/ProtectedRoute';
 import NoticePage from 'pages/NoticePage';
+import FreeBoardPage from 'pages/FreeBoardPage';
 
 const Container = styled.div`
   min-height: 100vh;
@@ -43,7 +44,7 @@ function App() {
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route
-            path="/notice/*"
+            path="/noticeBoard/*"
             element={
               <ProtectedRoute>
                 <NoticePage />
@@ -51,10 +52,26 @@ function App() {
             }
           />
           <Route
-            path="/board"
+            path="/dataBoard/*"
             element={
               <ProtectedRoute>
-                <BoardPage />
+                <DataBoardPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/etcBoard/*"
+            element={
+              <ProtectedRoute>
+                <FreeBoardPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="*"
+            element={
+              <ProtectedRoute>
+                <MainPage />
               </ProtectedRoute>
             }
           />

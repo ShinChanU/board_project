@@ -7,14 +7,21 @@ const TitleTd = styled.td`
   cursor: pointer;
 `;
 
-const Article = ({ post, idx }) => {
+const postCate = {
+  notice: '공지',
+  data: '자료',
+  result: '취합',
+  etc: '자유',
+};
+
+const Article = ({ post, idx, type }) => {
   return (
     <Tr>
       <td>{idx}</td>
-      <td>공지</td>
+      <td>{postCate[post.category]}</td>
       <td>{post.author.substr(0, 6)}</td>
       <TitleTd>
-        <Link to={process.env.PUBLIC_URL + `/notice/${post._id}`}>
+        <Link to={process.env.PUBLIC_URL + `/${type}Board/${post._id}`}>
           {post.title}
         </Link>
       </TitleTd>

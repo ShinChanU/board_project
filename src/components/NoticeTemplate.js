@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import oc from 'open-color';
+import { postStore } from 'lib/zustand/postStore';
 
 const Container = styled.div`
   max-width: 1300px;
@@ -37,11 +38,13 @@ const Header = styled.h1`
   margin-bottom: 20px;
 `;
 
-const NoticeTemplate = ({ children }) => {
+const NoticeTemplate = ({ children, type }) => {
+  const { postCate } = postStore();
+
   return (
     <Container>
       <FlexBox>
-        <Header>공지사항</Header>
+        <Header>{postCate[type]}</Header>
         {children}
       </FlexBox>
     </Container>

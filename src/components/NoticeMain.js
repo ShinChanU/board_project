@@ -37,23 +37,26 @@ const Table = styled.table`
   }
 `;
 
-const NoticeMain = () => {
-  const { noticePosts, getNoticePosts, postPosts } = postStore();
+const NoticeMain = ({ user, type }) => {
+  const { postsList, getPosts, postPosts } = postStore();
   const [isWrite, setIsWrite] = useState(false);
 
   useEffect(() => {
-    getNoticePosts();
-  }, []);
+    getPosts(type);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isWrite]);
 
   const onChangeWrite = () => {
     setIsWrite(!isWrite);
   };
 
   return (
-    <NoticeTemplate>
+    <NoticeTemplate type={type}>
       <>
         <button onClick={onChangeWrite}>{isWrite ? '목록' : '글쓰기'}</button>
-        {isWrite && <WriteBoard close={onChangeWrite} postPosts={postPosts} />}
+        {isWrite && (
+          <WriteBoard close={onChangeWrite} postPosts={postPosts} user={user} />
+        )}
         {!isWrite && (
           <Table>
             <thead>
@@ -64,8 +67,8 @@ const NoticeMain = () => {
               </tr>
             </thead>
             <tbody>
-              {noticePosts.map((post, i) => (
-                <Article post={post} key={post._id} idx={i + 1} />
+              {postsList.map((post, i) => (
+                <Article post={post} key={post._id} idx={i + 1} type={type} />
               ))}
             </tbody>
           </Table>

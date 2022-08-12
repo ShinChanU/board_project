@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Editor from 'components/Board/Editor';
 import oc from 'open-color';
@@ -62,13 +62,51 @@ const Error = styled.div`
   margin-bottom: 20px;
 `;
 
-const WriteBoard = ({ close, postPosts }) => {
+const SaveFiles = styled.div`
+  display: flex;
+`;
+
+const WriteBoard = ({ close, postPosts, user, id, postData, deleteFile }) => {
   const [post, setPost] = useState({
     title: '',
     body: '', // text이지만 html
+    category: '',
+    delFiles: {
+      org: [],
+      save: [],
+    },
   });
   const [err, setErr] = useState(null);
   const [files, setFiles] = useState(undefined);
+  const [postCates, setPostCates] = useState({ etc: '자유 게시판' });
+  const { userType } = user;
+
+  useEffect(() => {
+    if (!postData) return;
+    const { title, body, category } = postData;
+    setPost({
+      ...post,
+      title,
+      body,
+      category,
+    });
+  }, [postData]);
+
+  useEffect(() => {
+    if (userType === 'top') {
+      setPostCates({
+        ...postCates,
+        data: '자료 게시판',
+      });
+    } else if (userType === 'admin') {
+      setPostCates({
+        notice: '공지사항',
+        result: '자료 취합 게시판',
+        ...postCates,
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userType]);
 
   const onChangeValue = (e) => {
     const { name, value } = e.target;
@@ -82,6 +120,7 @@ const WriteBoard = ({ close, postPosts }) => {
 
   const onChangeFiles = (e) => {
     setFiles(e.target.files);
+    console.log(files, e.target.files);
   };
 
   const handleSubmit = async (e) => {
@@ -91,7 +130,7 @@ const WriteBoard = ({ close, postPosts }) => {
       formData.append('file', files[key]);
     }
     formData.append('data', JSON.stringify(post));
-    let resArr = await postPosts(null, formData);
+    let resArr = await postPosts(id, formData, postData);
     if (resArr[0]) {
       alert('게시물을 업로드하였습니다 !');
       close();
@@ -99,6 +138,23 @@ const WriteBoard = ({ close, postPosts }) => {
       setErr(resArr[1]);
     }
   };
+
+  const onClickDelFiles = (i) => {
+    let tmpOrg = post.delFiles.org.slice();
+    let tmpSave = post.delFiles.save.slice();
+    tmpOrg.push(postData.orgFileName[i]);
+    tmpSave.push(postData.saveFileName[i]);
+    setPost({
+      ...post,
+      delFiles: {
+        org: tmpOrg,
+        save: tmpSave,
+      },
+    });
+    deleteFile(i);
+  };
+
+  console.log(post, postData);
 
   return (
     <Container>
@@ -113,6 +169,25 @@ const WriteBoard = ({ close, postPosts }) => {
             onChange={onChangeValue}
           />
         </Div>
+        <Div>
+          업로드 게시판
+          <select
+            name="category"
+            onChange={onChangeValue}
+            defaultValue={postData ? postData.category : 'default'}
+          >
+            <option value="default" disabled>
+              게시판을 선택해주세요.
+            </option>
+            {Object.keys(postCates).map((e) => {
+              return (
+                <option key={e} value={e}>
+                  {postCates[e]}
+                </option>
+              );
+            })}
+          </select>
+        </Div>
         <Editor value={post.body} onChange={onChangeValue} />
         <Div>
           <label htmlFor="files">첨부 파일</label>
@@ -124,6 +199,17 @@ const WriteBoard = ({ close, postPosts }) => {
             multiple
             onChange={onChangeFiles}
           />
+          {postData &&
+            postData.orgFileName.map((e, i) => (
+              <SaveFiles key={e}>
+                <div key={e}>{e}</div>
+                <input
+                  type="button"
+                  value="X"
+                  onClick={() => onClickDelFiles(i)}
+                />
+              </SaveFiles>
+            ))}
         </Div>
         {err && <Error>{err}</Error>}
         <Button type="submit">저장하기</Button>
@@ -133,3 +219,6 @@ const WriteBoard = ({ close, postPosts }) => {
 };
 
 export default WriteBoard;
+
+// 0813
+// 게시글 수정 완료 후 처리 해야함
