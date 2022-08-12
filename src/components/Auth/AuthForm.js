@@ -158,13 +158,14 @@ const AuthForm = ({ type, authForm }) => {
                   defaultValue="default"
                 >
                   <option value="default" disabled>
-                    회사를 선택해주세요.
+                    회사를 선택해주세요. (회사명/회사코드)
                   </option>
                   {Object.keys(companyCodes).map((e) => (
                     <option value={companyCodes[e]} key={e}>
                       {e}
                     </option>
                   ))}
+                  <option value="etc">회사코드 직접 입력</option>
                 </Select>
               );
             } else {
@@ -175,6 +176,7 @@ const AuthForm = ({ type, authForm }) => {
                   type={authForm[key].type}
                   value={authForm[key].value}
                   onChange={(e) => onChangeAuth(type, key, e.target.value)}
+                  maxLength={authForm[key].max}
                 />
               );
             }
