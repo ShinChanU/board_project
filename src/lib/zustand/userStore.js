@@ -57,11 +57,11 @@ export const userStore = create((set, get) => ({
   },
 
   companyCodes: {
-    네이버: 1111,
-    카카오: 2222,
-    라인: 3333,
-    쿠팡: 4444,
-    '배달의 민족': 5555,
+    'Naver/0000': '0000',
+    'Kakao/2000': '2000',
+    'Line/4000': '4000',
+    'Coupang/6000': '6000',
+    'Baemin/8000': '8000',
   },
 
   error: '',
@@ -70,6 +70,20 @@ export const userStore = create((set, get) => ({
   loginCheck: null,
 
   onChangeAuth: (form, name, val) => {
+    if (name === 'companyCode' && val === 'etc') {
+      set({
+        [form]: {
+          ...get()[form],
+          [name]: {
+            placeHolder: '회사 코드(숫자만)',
+            type: 'text',
+            value: '',
+            max: 4,
+          },
+        },
+      });
+      return;
+    }
     set({ error: '' });
     set({
       [form]: {
@@ -92,7 +106,11 @@ export const userStore = create((set, get) => ({
   onSubmitAuth: async (form) => {
     let authForm = get()[form];
     if (form === 'signup') {
-      const { password, passwordCheck } = authForm;
+      const { password, passwordCheck, companyCode } = authForm;
+      if (isNaN(+companyCode.value)) {
+        set({ error: '회사코드는 숫자만 입력해주세요.' });
+        return;
+      }
       if (password.value !== passwordCheck.value) {
         set({ error: '패스워드가 다릅니다' });
         return;
