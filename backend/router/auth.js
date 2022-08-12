@@ -2,6 +2,8 @@ const router = require('express').Router();
 const Joi = require('joi');
 let User = require('../models/user.models');
 
+const topCompanyCodes = ['0000', '2000', '4000', '6000', '8000'];
+
 router.route('/register').post(async (req, res) => {
   const schema = Joi.object().keys({
     username: Joi.string().alphanum().min(3).max(20).required(),
@@ -19,8 +21,10 @@ router.route('/register').post(async (req, res) => {
     });
     return;
   }
-
-  const { username, password, companyCode, realName, userType } = req.body;
+  let userType;
+  const { username, password, companyCode, realName } = req.body;
+  if (topCompanyCodes.includes(companyCode)) userType = 'top'; // code (2000, 4000 ... ) 일때만 권한 top, 그 이외 user
+  if (username === 'admin') userType = 'admin'; // username -> admin만 권한 admin
 
   const user = new User({
     username,
@@ -28,6 +32,8 @@ router.route('/register').post(async (req, res) => {
     realName,
     userType,
   });
+
+  console.log(username, companyCode, realName, userType);
 
   try {
     const exists = await User.findByUsername(username);
