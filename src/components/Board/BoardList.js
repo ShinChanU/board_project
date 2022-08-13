@@ -46,6 +46,10 @@ const BoardList = ({ user, type }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isWrite, type]);
 
+  useEffect(() => {
+    setIsWrite(false);
+  }, [type]);
+
   const onChangeWrite = () => {
     setIsWrite(!isWrite);
   };
@@ -59,7 +63,12 @@ const BoardList = ({ user, type }) => {
     >
       <>
         {isWrite && (
-          <WriteBoard close={onChangeWrite} postPosts={postPosts} user={user} />
+          <WriteBoard
+            close={onChangeWrite}
+            postPosts={postPosts}
+            user={user}
+            type={type}
+          />
         )}
         {!isWrite && (
           <Table>
