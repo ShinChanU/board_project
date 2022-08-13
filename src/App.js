@@ -1,14 +1,13 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
-// import MainPage from 'pages/MainPage';
-import SignupPage from 'pages/SignupPage';
-import LoginPage from 'pages/LoginPage';
+import MainPage from 'pages/Other/MainPage';
+import SignupPage from 'pages/Auth/SignupPage';
+import LoginPage from 'pages/Auth/LoginPage';
 import styled from 'styled-components';
-import NavBar from 'components/NavBar';
-import BoardPage from 'pages/BoardPage';
+import NavBar from 'components/common/NavBar';
 import OpenColor from 'open-color';
 import ProtectedRoute from 'lib/router/ProtectedRoute';
-import NoticePage from 'pages/NoticePage';
+import BoardPage from 'pages/Board/BoardPage';
 
 const Container = styled.div`
   min-height: 100vh;
@@ -33,28 +32,44 @@ function App() {
         <Header to="/">Web Project</Header>
         <Routes>
           <Route
-            path="/"
+            path="*"
             element={
               <ProtectedRoute>
-                <NoticePage />
+                <BoardPage type="notice" />
               </ProtectedRoute>
             }
           />
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route
-            path="/notice/*"
+            path="/noticeBoard/*"
             element={
               <ProtectedRoute>
-                <NoticePage />
+                <BoardPage type="notice" />
               </ProtectedRoute>
             }
           />
           <Route
-            path="/board"
+            path="/dataBoard/*"
             element={
               <ProtectedRoute>
-                <BoardPage />
+                <BoardPage type="data" />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/etcBoard/*"
+            element={
+              <ProtectedRoute>
+                <BoardPage type="etc" />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="*"
+            element={
+              <ProtectedRoute>
+                <MainPage />
               </ProtectedRoute>
             }
           />

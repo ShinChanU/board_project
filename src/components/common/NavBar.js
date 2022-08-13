@@ -76,8 +76,9 @@ const NavBar = () => {
             <Span>{user.realName}</Span> 님 환영합니다!
           </Div>
           <div>
-            <LinkDiv to="/notice">📌공지사항</LinkDiv>
-            <LinkDiv to="/board">📈자료취합게시판</LinkDiv>
+            <LinkDiv to="/noticeBoard">📌공지사항</LinkDiv>
+            <LinkDiv to="/dataBoard">📈자료취합게시판</LinkDiv>
+            <LinkDiv to="/etcBoard">🌟자유게시판</LinkDiv>
             <Button onClick={logout}>로그아웃</Button>
           </div>
         </Header>

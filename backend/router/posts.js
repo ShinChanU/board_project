@@ -216,7 +216,9 @@ router.route('/:id').delete((req, res) => {
   const { username } = resJwt;
   if (username === 'admin') {
     Post.findByIdAndDelete(id)
-      .then(() => res.json('Post deleted.'))
+      .then((data) => {
+        return res.json('Post deleted.');
+      })
       .catch((err) => res.status(400).json('Error: ' + err));
     return;
   } else {
@@ -224,7 +226,9 @@ router.route('/:id').delete((req, res) => {
       .then((post) => {
         if (post.author === username) {
           Post.findByIdAndDelete(id)
-            .then(() => res.json('Post deleted.'))
+            .then((data) => {
+              return res.json('Post deleted.');
+            })
             .catch((err) => res.status(400).json('Error: ' + err));
         } else {
           res.status(401).send({
@@ -285,7 +289,8 @@ router.route('/:id').post((req, res) => {
           message: '잘못된 데이터 요청입니다.',
         });
       }
-      const { title, body, category } = JSON.parse(req.body.data);
+      const { title, body, category, delFiles } = JSON.parse(req.body.data);
+
       if (!title) {
         res.status(400).send({
           message: '제목이 없습니다.',
@@ -314,11 +319,21 @@ router.route('/:id').post((req, res) => {
             });
             return;
           }
+          let tmpOrg = post.orgFileName.slice();
+          let tmpSave = post.saveFileName.slice();
+          if (delFiles) {
+            delFiles.org.forEach((e, i) => {
+              let tmpOrgIdx = tmpOrg.indexOf(e);
+              let tmpSaveIdx = tmpSave.indexOf(delFiles.save[i]);
+              tmpOrg.splice(tmpOrgIdx, 1);
+              tmpSave.splice(tmpSaveIdx, 1);
+            });
+          }
 
           post.title = title;
           post.body = body;
-          post.orgFileName = reqOrgFiles;
-          post.saveFileName = reqSaveFiles;
+          post.orgFileName = [...tmpOrg, ...reqOrgFiles];
+          post.saveFileName = [...tmpSave, ...reqSaveFiles];
           post.category = category;
           post.updatedAt = getCurrentDate();
           post
