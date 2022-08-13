@@ -1,10 +1,10 @@
 import { postStore } from 'lib/zustand/postStore';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import Article from './Board/Article';
+import Article from './Article';
 import oc from 'open-color';
-import WriteBoard from './Board/WriteBoard';
-import NoticeTemplate from './NoticeTemplate';
+import WriteBoard from './WriteBoard';
+import NoticeTemplate from './BoardTemplate';
 
 const columns = ['번호', '분류', '작성자', '제목', '등록일', '조회수'];
 
@@ -37,23 +37,27 @@ const Table = styled.table`
   }
 `;
 
-const NoticeMain = ({ user, type }) => {
+const BoardList = ({ user, type }) => {
   const { postsList, getPosts, postPosts } = postStore();
   const [isWrite, setIsWrite] = useState(false);
 
   useEffect(() => {
     getPosts(type);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isWrite]);
+  }, [isWrite, type]);
 
   const onChangeWrite = () => {
     setIsWrite(!isWrite);
   };
 
   return (
-    <NoticeTemplate type={type}>
+    <NoticeTemplate
+      isWrite={isWrite}
+      onChangeWrite={onChangeWrite}
+      user={user}
+      type={type}
+    >
       <>
-        <button onClick={onChangeWrite}>{isWrite ? '목록' : '글쓰기'}</button>
         {isWrite && (
           <WriteBoard close={onChangeWrite} postPosts={postPosts} user={user} />
         )}
@@ -78,4 +82,4 @@ const NoticeMain = ({ user, type }) => {
   );
 };
 
-export default NoticeMain;
+export default BoardList;

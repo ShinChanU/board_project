@@ -2,11 +2,12 @@ import axios from 'axios';
 import { postStore } from 'lib/zustand/postStore';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import styled from 'styled-components';
-import NoticeTemplate from './NoticeTemplate';
+import styled, { css } from 'styled-components';
+import NoticeTemplate from './BoardTemplate';
 import * as XLSX from 'xlsx';
-import WriteBoard from './Board/WriteBoard.js';
+import WriteBoard from './WriteBoard.js';
 import { useNavigate } from 'react-router-dom';
+import oc from 'open-color';
 
 const Container = styled.div`
   width: 100%;
@@ -69,20 +70,48 @@ const Files = styled.div`
   margin-bottom: 20px;
 `;
 
-const NoticeDetail = ({ user, type }) => {
+const FlexDiv = styled.div`
+  display: flex;
+  width: 100%;
+  justify-content: flex-end;
+`;
+
+const Button = styled.button`
+  background: ${oc.indigo[5]};
+  color: white;
+  border: none;
+  border-radius: 5px;
+  width: 100px;
+  font-size: 17px;
+  font-weight: 550;
+  padding: 10px 0px;
+  margin-left: 10px;
+  cursor: pointer;
+
+  ${(props) =>
+    props.del &&
+    css`
+      background: ${oc.red[7]};
+    `}
+`;
+
+const BoardDetail = ({ user, type }) => {
   const { id } = useParams();
   const { getDetailPost, removePost, postPosts } = postStore();
   const [post, setPost] = useState(null);
-  const { userType, username } = user;
+  const { username } = user;
   const [isWrite, setIsWrite] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
+    console.log('test');
     (async () => {
       let res = await getDetailPost('notice', id);
       setPost(res);
     })();
-  }, [getDetailPost, id]);
+  }, [getDetailPost, id, isWrite]);
+
+  console.log(post);
 
   const downLoadFile = async (fileName, fileId) => {
     const res = await axios.get(`/posts/download/${fileId}`);
@@ -121,17 +150,7 @@ const NoticeDetail = ({ user, type }) => {
   };
 
   return (
-    <NoticeTemplate>
-      {!isWrite && post && (
-        <>
-          {(post.author === username || username === 'admin') && (
-            <button onClick={onClickDelPost}>삭제하기</button>
-          )}
-          {post.author === username && (
-            <button onClick={onChangeWrite}>수정하기</button>
-          )}
-        </>
-      )}
+    <NoticeTemplate type={type}>
       {isWrite && (
         <WriteBoard
           close={onChangeWrite}
@@ -142,8 +161,8 @@ const NoticeDetail = ({ user, type }) => {
           deleteFile={delSaveFile}
         />
       )}
-      <Container>
-        {!isWrite && post && (
+      {!isWrite && post && (
+        <Container>
           <Contents>
             <Header>
               <Title>{post.title}</Title>
@@ -157,38 +176,59 @@ const NoticeDetail = ({ user, type }) => {
                   </div>
                 )}
                 <div>
-                  <span>작성일</span>{' '}
+                  <span>작성일</span>
                   {post.createdAt.substr(0, 16).replace('T', ' ')}
                 </div>
+                {post.updatedAt && (
+                  <div>
+                    <span>최근 수정일</span>
+                    {post.updatedAt.substr(0, 16).replace('T', ' ')}
+                  </div>
+                )}
                 <div>
                   <span>조회수</span> {post.views}
                 </div>
               </Sub>
             </Header>
-            <Body>
-              <div dangerouslySetInnerHTML={{ __html: post.body }} />
-            </Body>
-            <Files>
-              첨부파일(다운로드)
-              {post.orgFileName.map((file, i) => (
-                <div key={i}>
-                  <button
-                    onClick={() => downLoadFile(file, post.saveFileName[i])}
-                  >
-                    {file}
-                  </button>
-                </div>
-              ))}
-              <></>
-            </Files>
+            {post.body && (
+              <Body>
+                <div dangerouslySetInnerHTML={{ __html: post.body }} />
+              </Body>
+            )}
+            {!!post.orgFileName.length && (
+              <Files>
+                첨부파일(다운로드)
+                {post.orgFileName.map((file, i) => (
+                  <div key={i}>
+                    <button
+                      onClick={() => downLoadFile(file, post.saveFileName[i])}
+                    >
+                      {file}
+                    </button>
+                  </div>
+                ))}
+              </Files>
+            )}
           </Contents>
-        )}
-        {!post && <>Loading...</>}
-      </Container>
+        </Container>
+      )}
+      {!post && <>Loading...</>}
+      {!isWrite && post && (
+        <FlexDiv>
+          {post.author === username && (
+            <Button onClick={onChangeWrite}>수정하기</Button>
+          )}
+          {(post.author === username || username === 'admin') && (
+            <Button del onClick={onClickDelPost}>
+              삭제하기
+            </Button>
+          )}
+        </FlexDiv>
+      )}
     </NoticeTemplate>
   );
 };
 
-export default NoticeDetail;
+export default BoardDetail;
 
 // https://developer-talk.tistory.com/328

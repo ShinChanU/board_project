@@ -11,7 +11,7 @@ const Container = styled.div`
   padding: 0px 20px;
   display: flex;
   flex-direction: column;
-  margin: 20px 0px;
+  margin-bottom: 20px;
 
   form {
     width: 100%;
@@ -90,6 +90,7 @@ const WriteBoard = ({ close, postPosts, user, id, postData, deleteFile }) => {
       body,
       category,
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [postData]);
 
   useEffect(() => {
@@ -153,8 +154,6 @@ const WriteBoard = ({ close, postPosts, user, id, postData, deleteFile }) => {
     });
     deleteFile(i);
   };
-
-  console.log(post, postData);
 
   return (
     <Container>

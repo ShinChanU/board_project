@@ -1,15 +1,13 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
-import MainPage from 'pages/MainPage';
-import SignupPage from 'pages/SignupPage';
-import LoginPage from 'pages/LoginPage';
+import MainPage from 'pages/Other/MainPage';
+import SignupPage from 'pages/Auth/SignupPage';
+import LoginPage from 'pages/Auth/LoginPage';
 import styled from 'styled-components';
-import NavBar from 'components/NavBar';
-import DataBoardPage from 'pages/DataBoardPage';
+import NavBar from 'components/common/NavBar';
 import OpenColor from 'open-color';
 import ProtectedRoute from 'lib/router/ProtectedRoute';
-import NoticePage from 'pages/NoticePage';
-import FreeBoardPage from 'pages/FreeBoardPage';
+import BoardPage from 'pages/Board/BoardPage';
 
 const Container = styled.div`
   min-height: 100vh;
@@ -34,10 +32,10 @@ function App() {
         <Header to="/">Web Project</Header>
         <Routes>
           <Route
-            path="/"
+            path="*"
             element={
               <ProtectedRoute>
-                <NoticePage />
+                <BoardPage type="notice" />
               </ProtectedRoute>
             }
           />
@@ -47,7 +45,7 @@ function App() {
             path="/noticeBoard/*"
             element={
               <ProtectedRoute>
-                <NoticePage />
+                <BoardPage type="notice" />
               </ProtectedRoute>
             }
           />
@@ -55,7 +53,7 @@ function App() {
             path="/dataBoard/*"
             element={
               <ProtectedRoute>
-                <DataBoardPage />
+                <BoardPage type="data" />
               </ProtectedRoute>
             }
           />
@@ -63,7 +61,7 @@ function App() {
             path="/etcBoard/*"
             element={
               <ProtectedRoute>
-                <FreeBoardPage />
+                <BoardPage type="etc" />
               </ProtectedRoute>
             }
           />

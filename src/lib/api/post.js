@@ -62,7 +62,6 @@ export const updatePostData = async (id, data, saveFiles) => {
       data,
       saveFiles,
     });
-    console.log(res);
     return res;
   } catch (e) {
     return e.response;

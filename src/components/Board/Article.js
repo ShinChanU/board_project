@@ -1,8 +1,21 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
+import styled, { css } from 'styled-components';
+import oc from 'open-color';
 
 const Tr = styled.tr``;
+
+const Td = styled.td`
+  cursor: pointer;
+
+  ${(props) =>
+    (props.accent === 'notice' || props.accent === 'result') &&
+    css`
+      color: ${oc.indigo[7]};
+      font-weight: 600;
+    `}
+`;
+
 const TitleTd = styled.td`
   cursor: pointer;
 `;
@@ -15,18 +28,20 @@ const postCate = {
 };
 
 const Article = ({ post, idx, type }) => {
+  const navigate = useNavigate();
+
+  const onClick = () => {
+    navigate(process.env.PUBLIC_URL + `/${type}Board/${post._id}`);
+  };
+
   return (
     <Tr>
-      <td>{idx}</td>
-      <td>{postCate[post.category]}</td>
-      <td>{post.author.substr(0, 6)}</td>
-      <TitleTd>
-        <Link to={process.env.PUBLIC_URL + `/${type}Board/${post._id}`}>
-          {post.title}
-        </Link>
-      </TitleTd>
-      <td>{post.createdAt.substr(0, 16).replace('T', ' ')}</td>
-      <td>{post.views}</td>
+      <Td>{idx}</Td>
+      <Td accent={post.category}>{postCate[post.category]}</Td>
+      <Td>{post.author.substr(0, 6)}</Td>
+      <TitleTd onClick={onClick}>{post.title}</TitleTd>
+      <Td>{post.createdAt.substr(0, 16).replace('T', ' ')}</Td>
+      <Td>{post.views}</Td>
     </Tr>
   );
 };

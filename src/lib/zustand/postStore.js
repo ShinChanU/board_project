@@ -40,29 +40,20 @@ export const postStore = create(
       },
 
       postPosts: async (id, data, postData) => {
+        let res;
         if (!id) {
-          const res = await postAPI.createPostData(data);
-          if (res.status === 200) {
-            get().getPosts();
-            return [1];
-          } else if (res.status === 400) {
-            return [0, res.data.message];
-          } else {
-            return [0, 'Error 발생'];
-          }
+          res = await postAPI.createPostData(data);
         } else {
           let saveFiles = postData.saveFileName;
-          console.log(saveFiles);
-          const res = await postAPI.updatePostData(id, data, saveFiles);
-          // if (res.status === 200) {
-          //   get().getPosts();
-          //   return [1];
-          // } else if (res.status === 400) {
-          //   return [0, res.data.message];
-          // } else {
-          //   return [0, 'Error 발생'];
-          // }
-          // if (res.status === 200) set({ noticePosts: res.data });
+          res = await postAPI.updatePostData(id, data, saveFiles);
+        }
+        if (res.status === 200) {
+          get().getPosts();
+          return [1];
+        } else if (res.status === 400) {
+          return [0, res.data.message];
+        } else {
+          return [0, 'Error 발생'];
         }
       },
     }),
