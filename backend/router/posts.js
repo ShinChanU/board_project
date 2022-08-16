@@ -278,110 +278,130 @@ router.route('/').post(async (req, res) => {
       let resultSalesData = [];
       let errData = 0;
 
-      // 엑셀 형식 검증(숫자필드가 맞는지, 회사이름 제외)
-      excelData.map((file) => {
-        if (errData) return 0;
-        file.map((comData) => {
+      if (category === 'data') {
+        // 자료파일일때만 회사 매출액 데이터에 취합
+        // 엑셀 형식 검증(숫자필드가 맞는지, 회사이름 제외)
+        excelData.forEach((file) => {
           if (errData) return 0;
-          let companyCode = comData['회사코드'];
-          let companyName = comData['회사명'];
-          let year = comData['년도(yyyy)'];
-          let month = comData['월(mm)'];
-          let revenue = comData['매출액(만원)'];
-          let operatingIncome = comData['영업이익(만원)'];
-          let netIncome = comData['순수익(만원)'];
+          file.forEach((comData) => {
+            if (errData) return 0;
+            let companyCode = comData['회사코드'];
+            let companyName = comData['회사명'];
+            let year = comData['년도(yyyy)'];
+            let month = comData['월(mm)'];
+            let revenue = comData['매출액(만원)'];
+            let operatingIncome = comData['영업이익(만원)'];
+            let netIncome = comData['순수익(만원)'];
 
-          if (
-            typeCheck(companyCode, 'number') *
-              typeCheck(year, 'number') *
-              typeCheck(month, 'number') *
-              typeCheck(revenue, 'number') *
-              typeCheck(operatingIncome, 'number') *
-              typeCheck(netIncome, 'number') ===
-            0
-          ) {
-            errData = 1; // number에 맞지않는 값 존재
-          } else {
-            resultSalesData.push({
-              companyCode,
-              companyName,
-              year,
-              month,
-              revenue,
-              operatingIncome,
-              netIncome,
-            });
-          }
-        });
-      });
-
-      if (errData) {
-        res.status(400).send({
-          message: '엑셀파일에 숫자형식이 일치하지 않는 값이 존재합니다.',
-        });
-        return;
-      }
-
-      for (let comData of resultSalesData) {
-        const {
-          companyCode,
-          companyName,
-          year,
-          month,
-          revenue,
-          operatingIncome,
-          netIncome,
-        } = comData;
-        CompanySales.findOne({ companyCode }).then(async (existData) => {
-          if (existData) {
-            // 회사코드에 대한 정보는 이미 있으면, 년월 데이터만 추가!
             if (
-              !existData.sales.filter(
-                (e) => e.year === year && e.month === month,
-              ).length
+              typeCheck(companyCode, 'number') *
+                typeCheck(year, 'number') *
+                typeCheck(month, 'number') *
+                typeCheck(revenue, 'number') *
+                typeCheck(operatingIncome, 'number') *
+                typeCheck(netIncome, 'number') ===
+              0
             ) {
-              existData.sales = [
-                ...existData.sales,
-                {
+              errData = 1; // number에 맞지않는 값 존재
+            } else {
+              resultSalesData.push({
+                companyCode,
+                companyName,
+                year,
+                month,
+                revenue,
+                operatingIncome,
+                netIncome,
+              });
+            }
+          });
+        });
+
+        if (errData) {
+          res.status(400).send({
+            message: '엑셀파일에 숫자형식이 일치하지 않는 값이 존재합니다.',
+          });
+          return;
+        }
+
+        // 업로드한 엑셀 파일에 따라 회사 코드 수정
+        for (let comData of resultSalesData) {
+          const {
+            companyCode,
+            companyName,
+            year,
+            month,
+            revenue,
+            operatingIncome,
+            netIncome,
+          } = comData;
+          let resultFileName1 = `${year}_${month}취합자료.xlsx`;
+          let resultFileName2 = `${Math.ceil(month / 3)}분기취합자료.xlsx`;
+
+          Post.findOne({ category: 'result' }).then((post) => {
+            if (!post.saveFileName.includes(resultFileName1)) {
+              // 추가
+              post.saveFileName = [...post.saveFileName, resultFileName1];
+              post.orgFileName = [...post.orgFileName, resultFileName1];
+            }
+            if (!post.saveFileName.includes(resultFileName2)) {
+              post.saveFileName = [...post.saveFileName, resultFileName2];
+              post.orgFileName = [...post.orgFileName, resultFileName2];
+            }
+            post.save();
+          });
+
+          CompanySales.findOne({ companyCode }).then(async (existData) => {
+            if (existData) {
+              // 회사코드에 대한 정보는 이미 있으면, 년월 데이터만 추가!
+              if (
+                !existData.sales.filter(
+                  (e) => e.year === year && e.month === month,
+                ).length
+              ) {
+                existData.sales = [
+                  ...existData.sales,
+                  {
+                    year,
+                    month,
+                    revenue,
+                    operatingIncome,
+                    netIncome,
+                  },
+                ];
+                await existData.save();
+              } else {
+                // 같은 년월 데이터 입력시 update!
+                let idx;
+                existData.sales.forEach((e, i) => {
+                  if (e.year === year && e.month === month) idx = i;
+                });
+                existData.sales.splice(idx, 1, {
+                  year,
+                  month,
+                  revenue,
+                  operatingIncome,
+                  netIncome,
+                });
+                await existData.save();
+              }
+            } else {
+              // 새로운 회사코드에 대한 sales 데이터 생성
+              const companySales = new CompanySales({
+                companyCode,
+                companyName,
+                sales: {
                   year,
                   month,
                   revenue,
                   operatingIncome,
                   netIncome,
                 },
-              ];
-              await existData.save();
-            } else {
-              // 같은 년월 데이터 입력시 update!
-              let idx;
-              existData.sales.forEach((e, i) => {
-                if (e.year === year && e.month === month) idx = i;
               });
-              existData.sales.splice(idx, 1, {
-                year,
-                month,
-                revenue,
-                operatingIncome,
-                netIncome,
-              });
-              await existData.save();
+              await companySales.save();
             }
-          } else {
-            // 새로운 회사코드에 대한 sales 데이터 생성
-            const companySales = new CompanySales({
-              companyCode,
-              companyName,
-              sales: {
-                year,
-                month,
-                revenue,
-                operatingIncome,
-                netIncome,
-              },
-            });
-            await companySales.save();
-          }
-        });
+          });
+        }
       }
 
       const post = new Post({
