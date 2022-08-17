@@ -33,8 +33,6 @@ router.route('/register').post(async (req, res) => {
     userType,
   });
 
-  console.log(username, companyCode, realName, userType);
-
   try {
     const exists = await User.findByUsername(username);
     if (exists) {
