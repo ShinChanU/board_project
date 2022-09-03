@@ -66,6 +66,7 @@ const NavBar = () => {
     <Container>
       {!user && (
         <Header>
+          <LinkDiv to="/football">[NEW] ⚽축구</LinkDiv>
           <LinkDiv to="/login">로그인</LinkDiv>
           <LinkDiv to="/signup">회원가입</LinkDiv>
         </Header>

@@ -8,6 +8,7 @@ import NavBar from 'components/common/NavBar';
 import OpenColor from 'open-color';
 import ProtectedRoute from 'lib/router/ProtectedRoute';
 import BoardPage from 'pages/Board/BoardPage';
+import FootballPage from 'pages/Other/FootballPage';
 
 const Container = styled.div`
   min-height: 100vh;
@@ -29,7 +30,7 @@ function App() {
     <BrowserRouter>
       <Container>
         <NavBar />
-        <Header to="/">Web Project</Header>
+        {/* <Header to="/">Chan Board Project</Header> */}
         <Routes>
           <Route
             path="*"
@@ -65,6 +66,7 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route path="/football/*" element={<FootballPage />} />
           <Route
             path="*"
             element={

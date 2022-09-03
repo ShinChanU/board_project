@@ -40,9 +40,14 @@ const Table = styled.table`
 const BoardList = ({ user, type }) => {
   const { postsList, getPosts, postPosts } = postStore();
   const [isWrite, setIsWrite] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    getPosts(type);
+    setIsLoading(false);
+    (async () => {
+      await getPosts(type);
+      setIsLoading(true);
+    })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isWrite, type]);
 
@@ -62,6 +67,8 @@ const BoardList = ({ user, type }) => {
       type={type}
     >
       <>
+        {/* 스피너 넣기 */}
+        {!isLoading && !isWrite && <>Loading...</>}
         {isWrite && (
           <WriteBoard
             close={onChangeWrite}
@@ -70,7 +77,7 @@ const BoardList = ({ user, type }) => {
             type={type}
           />
         )}
-        {!isWrite && (
+        {isLoading && !isWrite && (
           <Table>
             <thead>
               <tr>

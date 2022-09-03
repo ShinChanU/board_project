@@ -5,7 +5,7 @@ import { postStore } from 'lib/zustand/postStore';
 
 const Container = styled.div`
   max-width: 1300px;
-  margin: 0 auto;
+  margin: 20px auto;
   padding: 0px 20px;
 `;
 

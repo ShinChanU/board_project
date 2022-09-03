@@ -1,10 +1,11 @@
-const router = require('express').Router();
-const Joi = require('joi');
-let User = require('../models/user.models');
+import express from 'express';
+import Joi from 'joi';
+import User from '../models/user.models.js';
 
+const authRouter = express.Router();
 const topCompanyCodes = ['0000', '2000', '4000', '6000', '8000'];
 
-router.route('/register').post(async (req, res) => {
+authRouter.route('/register').post(async (req, res) => {
   const schema = Joi.object().keys({
     username: Joi.string().alphanum().min(3).max(20).required(),
     password: Joi.string().alphanum().required(),
@@ -59,7 +60,7 @@ router.route('/register').post(async (req, res) => {
   }
 });
 
-router.route('/login').post(async (req, res) => {
+authRouter.route('/login').post(async (req, res) => {
   const { username, password } = req.body;
   if (!username || !password) {
     res.status(401).json({
@@ -100,7 +101,7 @@ router.route('/login').post(async (req, res) => {
   }
 });
 
-router.route('/check').get((req, res) => {
+authRouter.route('/check').get((req, res) => {
   const { user } = res;
   if (!user) {
     res.status(401).json({
@@ -114,14 +115,14 @@ router.route('/check').get((req, res) => {
   });
 });
 
-router.route('/logout').post((req, res) => {
+authRouter.route('/logout').post((req, res) => {
   res.cookie('accessToken');
   res.json({
     httpStatus: 204,
   });
 });
 
-module.exports = router;
+export default authRouter;
 
 // 0802 working
 // https://www.geeksforgeeks.org/login-form-using-node-js-and-mongodb/

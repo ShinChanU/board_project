@@ -26,6 +26,7 @@ export const postStore = create(
       getPosts: async (type) => {
         const res = await postAPI.getPosts(type);
         if (res.status === 200) set({ postsList: res.data.reverse() });
+        return res;
       },
 
       removePost: async (id) => {
