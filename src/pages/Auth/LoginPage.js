@@ -1,6 +1,6 @@
 import React from 'react';
-import AuthForm from 'components/Auth/AuthForm';
-import { userStore } from 'lib/zustand/userStore';
+import AuthForm from 'components/Auth/AuthForm.js';
+import { userStore } from 'lib/zustand/userStore.js';
 
 const LoginPage = () => {
   const { login } = userStore();

@@ -25,7 +25,7 @@
     "mongoose": "^6.4.7",
     "multer": "^1.4.5-lts.1",
     "open-color": "^1.9.1",
-    "puppeteer": "^17.1.0",
+    "puppeteer": "^17.1.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hls-player": "^3.0.7",
@@ -61,6 +61,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "type": "module"
+  }
 }

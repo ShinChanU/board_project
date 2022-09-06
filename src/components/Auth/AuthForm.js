@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 import OpenColor from 'open-color';
-import { userInfoStore, userStore } from 'lib/zustand/userStore';
+import { userInfoStore, userStore } from 'lib/zustand/userStore.js';
 
 const AuthContainer = styled.div`
   /* min-height: 100vh; */

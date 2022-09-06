@@ -1,14 +1,14 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
-import MainPage from 'pages/Other/MainPage';
-import SignupPage from 'pages/Auth/SignupPage';
-import LoginPage from 'pages/Auth/LoginPage';
+import MainPage from 'pages/Other/MainPage.js';
+import SignupPage from 'pages/Auth/SignupPage.js';
+import LoginPage from 'pages/Auth/LoginPage.js';
 import styled from 'styled-components';
-import NavBar from 'components/common/NavBar';
+import NavBar from 'components/common/NavBar.js';
 import OpenColor from 'open-color';
-import ProtectedRoute from 'lib/router/ProtectedRoute';
-import BoardPage from 'pages/Board/BoardPage';
-import FootballPage from 'pages/Other/FootballPage';
+import ProtectedRoute from 'lib/router/ProtectedRoute.js';
+import BoardPage from 'pages/Board/BoardPage.js';
+import FootballPage from 'pages/Other/FootballPage.js';
 
 const Container = styled.div`
   min-height: 100vh;

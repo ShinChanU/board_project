@@ -1,5 +1,5 @@
 import React from 'react';
-import { userInfoStore } from 'lib/zustand/userStore';
+import { userInfoStore } from 'lib/zustand/userStore.js';
 import { Navigate } from 'react-router-dom';
 
 const ProtectedRoute = ({ children }) => {

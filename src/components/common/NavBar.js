@@ -1,5 +1,5 @@
 import React from 'react';
-import { userInfoStore, userStore } from 'lib/zustand/userStore';
+import { userInfoStore, userStore } from 'lib/zustand/userStore.js';
 import { Link } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 import oc from 'open-color';

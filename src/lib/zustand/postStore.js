@@ -1,5 +1,5 @@
 import create from 'zustand';
-import * as postAPI from 'lib/api/post';
+import * as postAPI from 'lib/api/post.js';
 import { persist } from 'zustand/middleware';
 
 export const postStore = create(

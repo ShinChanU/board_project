@@ -1,10 +1,10 @@
-import { postStore } from 'lib/zustand/postStore';
+import { postStore } from 'lib/zustand/postStore.js';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import Article from './Article';
+import Article from './Article.js';
 import oc from 'open-color';
-import WriteBoard from './WriteBoard';
-import NoticeTemplate from './BoardTemplate';
+import WriteBoard from './WriteBoard.js';
+import NoticeTemplate from './BoardTemplate.js';
 
 const columns = ['번호', '분류', '작성자', '제목', '등록일', '조회수'];
 

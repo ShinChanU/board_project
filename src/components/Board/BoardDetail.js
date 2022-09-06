@@ -1,9 +1,9 @@
 import axios from 'axios';
-import { postStore } from 'lib/zustand/postStore';
+import { postStore } from 'lib/zustand/postStore.js';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import styled, { css } from 'styled-components';
-import NoticeTemplate from './BoardTemplate';
+import NoticeTemplate from './BoardTemplate.js';
 import * as XLSX from 'xlsx';
 import WriteBoard from './WriteBoard.js';
 import { useNavigate } from 'react-router-dom';
