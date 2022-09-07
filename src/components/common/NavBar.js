@@ -5,11 +5,14 @@ import styled, { css } from 'styled-components';
 import oc from 'open-color';
 
 const Container = styled.div`
+  width: 100%;
   background: ${oc.indigo[0]};
   padding: 0px 30px;
 `;
 
 const Header = styled.header`
+  width: 100%;
+
   margin: 0 auto;
   display: flex;
   justify-content: end;
@@ -67,8 +70,8 @@ const NavBar = () => {
       {!user && (
         <Header>
           <LinkDiv to="/football">[NEW] ⚽축구</LinkDiv>
-          <LinkDiv to="/login">로그인</LinkDiv>
-          <LinkDiv to="/signup">회원가입</LinkDiv>
+          {/* <LinkDiv to="/login">로그인</LinkDiv>
+          <LinkDiv to="/signup">회원가입</LinkDiv> */}
         </Header>
       )}
       {user && (

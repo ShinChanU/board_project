@@ -10,7 +10,7 @@ const ProtectedRoute = ({ children }) => {
   };
 
   if (!isLogin()) {
-    return <Navigate to={process.env.PUBLIC_URL + '/login'} />;
+    return <Navigate to={process.env.PUBLIC_URL + '/football'} />;
   }
 
   return children;

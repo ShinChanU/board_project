@@ -12,7 +12,11 @@ import FootballPage from 'pages/Other/FootballPage.js';
 
 const Container = styled.div`
   min-height: 100vh;
+  width: 100%;
   background: ${OpenColor.indigo[1]};
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 `;
 
 const Header = styled(Link)`
