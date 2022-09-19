@@ -1,8 +1,8 @@
 {
   "env": {
-    "commonJs": "true",
-    "es6": "true",
-    "node": "true"
+    "commonJs": true,
+    "es6": true,
+    "node": true
   },
   "extends": ["eslint:recommend", "prettier"],
   "globals": {
