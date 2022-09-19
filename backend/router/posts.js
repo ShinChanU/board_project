@@ -1,11 +1,12 @@
-const router = require('express').Router();
-let Post = require('../models/post.models');
-let XlsxFile = require('../models/xlsxFile.models');
-let CompanySales = require('../models/companySales.model');
-const multer = require('multer');
-const path = require('path');
-const XLSX = require('xlsx');
-const iconv = require('iconv-lite');
+import express from 'express';
+import Post from '../models/post.models.js';
+import XlsxFile from '../models/xlsxFile.models.js';
+import multer from 'multer';
+import path from 'path';
+import XLSX from 'xlsx';
+import iconv from 'iconv-lite';
+
+const postsRouter = express.Router();
 
 // 양식으로 지정된 컬럼값들
 const excelStandardCol = [
@@ -93,7 +94,7 @@ const checkJwt = (res) => {
 };
 
 // 게시글 타입별 조회(공지, 게시글, 기타)
-router.route('/:category').get((req, res) => {
+postsRouter.route('/:category').get((req, res) => {
   const resJwt = checkJwt(res);
   if (resJwt) {
     const { userType } = resJwt;
@@ -110,7 +111,7 @@ router.route('/:category').get((req, res) => {
 });
 
 //  db에서 엑셀 데이터를 찾아 json 으로 전송
-router.route('/download/:id').get(async (req, res) => {
+postsRouter.route('/download/:id').get(async (req, res) => {
   XlsxFile.find({ fileName: req.params.id })
     .then((file) => {
       return res.status(200).json({
@@ -121,13 +122,14 @@ router.route('/download/:id').get(async (req, res) => {
 });
 
 //  db에서 취합 자료 생성 후 전송
-router.route('/download/result/:date').get(async (req, res) => {
+postsRouter.route('/download/result/:date').get(async (req, res) => {
+  // data => "year_number-mon" or "year_number-quarter"
   const { date } = req.params;
   const [yyyymm, cycle] = date.split('-');
   const [year, month] = yyyymm.split('_');
+  let result = [];
   if (cycle === 'mon') {
     CompanySales.find().then((data) => {
-      let result = [];
       data.forEach((comData) => {
         let exist = 0;
         const { companyCode, companyName } = comData;
@@ -147,35 +149,6 @@ router.route('/download/result/:date').get(async (req, res) => {
         });
         if (exist) result.push(obj);
       });
-      res.send({
-        data: result,
-      });
-    });
-  } else if (cycle === 'quarter') {
-    CompanySales.find().then((data) => {
-      let result = [];
-      data.forEach((comData) => {
-        const { companyCode, companyName } = comData;
-        let obj = {
-          회사코드: companyCode,
-          회사명: companyName,
-        };
-
-        // (month*3-2)~(month*3)
-        for (let mon = month * 3 - 2; mon <= month * 3; mon++) {
-          comData.sales.forEach((sale) => {
-            if (sale.year === +year && sale.month === +mon) {
-              obj['년도(yyyy)'] = sale.year;
-              obj['월(mm)'] = sale.month;
-              obj['매출액(만원)'] = sale.revenue;
-              obj['영업이익(만원)'] = sale.operatingIncome;
-              obj['순수익(만원)'] = sale.netIncome;
-              result.push(obj);
-            }
-          });
-        }
-      });
-
       result.sort((a, b) => {
         return a.회사코드 - b.회사코드;
       });
@@ -192,7 +165,7 @@ router.route('/download/result/:date').get(async (req, res) => {
 });
 
 // 게시글 생성(모든 타입에 해당)
-router.route('/').post(async (req, res) => {
+postsRouter.route('/').post(async (req, res) => {
   const resJwt = checkJwt(res);
   if (!resJwt) {
     res.status(401).send({
@@ -335,18 +308,13 @@ router.route('/').post(async (req, res) => {
             operatingIncome,
             netIncome,
           } = comData;
-          let resultFileName1 = `${year}_${month}취합자료.xlsx`;
-          let resultFileName2 = `${Math.ceil(month / 3)}분기취합자료.xlsx`;
+          let resultFileName = `${year}년_${month}월 매출액취합자료.xlsx`;
 
           Post.findOne({ category: 'result' }).then((post) => {
-            if (!post.saveFileName.includes(resultFileName1)) {
+            if (!post.saveFileName.includes(resultFileName)) {
               // 추가
-              post.saveFileName = [...post.saveFileName, resultFileName1];
-              post.orgFileName = [...post.orgFileName, resultFileName1];
-            }
-            if (!post.saveFileName.includes(resultFileName2)) {
-              post.saveFileName = [...post.saveFileName, resultFileName2];
-              post.orgFileName = [...post.orgFileName, resultFileName2];
+              post.saveFileName = [...post.saveFileName, resultFileName];
+              post.orgFileName = [...post.orgFileName, resultFileName];
             }
             post.save();
           });
@@ -432,7 +400,7 @@ router.route('/').post(async (req, res) => {
 });
 
 // 게시글 세부 조회 (카테고리, id로 접근)
-router.route('/:category/:id').get((req, res) => {
+postsRouter.route('/:category/:id').get((req, res) => {
   const resJwt = checkJwt(res);
   if (!resJwt) {
     res.status(401).send({
@@ -451,7 +419,7 @@ router.route('/:category/:id').get((req, res) => {
 });
 
 // 게시글 삭제 (자기것만, 관리자 제외)
-router.route('/:id').delete((req, res) => {
+postsRouter.route('/:id').delete((req, res) => {
   const resJwt = checkJwt(res);
   if (!resJwt) {
     res.status(401).send({
@@ -463,7 +431,31 @@ router.route('/:id').delete((req, res) => {
   const { username } = resJwt;
   if (username === 'admin') {
     Post.findByIdAndDelete(id)
-      .then((data) => {
+      .then((post) => {
+        if (post.category === 'data') {
+          for (let file of post.saveFileName) {
+            XlsxFile.findOne({ fileName: file }).then((xlsx) => {
+              // xlsx.data 를  companySales에서 삭제
+              for (let info of xlsx.data) {
+                CompanySales.findOne({ companyCode: info['회사코드'] }).then(
+                  (comSale) => {
+                    let tmp = 0;
+                    for (let sale of comSale.sales) {
+                      if (
+                        info['월(mm)'] === sale.month &&
+                        info['년도(yyyy)'] === sale.year
+                      ) {
+                        comSale.sales.splice(tmp, 1);
+                      }
+                      tmp++;
+                    }
+                    comSale.save();
+                  },
+                );
+              }
+            });
+          }
+        }
         return res.json('Post deleted.');
       })
       .catch((err) => res.status(400).json('Error: ' + err));
@@ -471,6 +463,31 @@ router.route('/:id').delete((req, res) => {
   } else {
     Post.findById(id)
       .then((post) => {
+        if (post.category === 'data') {
+          for (let file of post.saveFileName) {
+            XlsxFile.findOne({ fileName: file }).then((xlsx) => {
+              // xlsx.data 를  companySales에서 삭제
+              for (let info of xlsx.data) {
+                CompanySales.findOne({ companyCode: info['회사코드'] }).then(
+                  (comSale) => {
+                    let tmp = 0;
+                    for (let sale of comSale.sales) {
+                      if (
+                        info['월(mm)'] === sale.month &&
+                        info['년도(yyyy)'] === sale.year
+                      ) {
+                        comSale.sales.splice(tmp, 1);
+                      }
+                      tmp++;
+                    }
+                    comSale.save();
+                  },
+                );
+              }
+            });
+          }
+        }
+
         if (post.author === username) {
           Post.findByIdAndDelete(id)
             .then((data) => {
@@ -490,7 +507,7 @@ router.route('/:id').delete((req, res) => {
 });
 
 // 게시글 수정 (자기 것만, admin은 제외)
-router.route('/:id').post((req, res) => {
+postsRouter.route('/:id').post((req, res) => {
   const resJwt = checkJwt(res);
   if (!resJwt) {
     res.status(401).send({
@@ -619,4 +636,4 @@ router.route('/:id').post((req, res) => {
   }
 });
 
-module.exports = router;
+export default postsRouter;

@@ -1,15 +1,18 @@
 import React from 'react';
-import { userInfoStore, userStore } from 'lib/zustand/userStore';
+import { userInfoStore, userStore } from 'lib/zustand/userStore.js';
 import { Link } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 import oc from 'open-color';
 
 const Container = styled.div`
+  width: 100%;
   background: ${oc.indigo[0]};
   padding: 0px 30px;
 `;
 
 const Header = styled.header`
+  width: 100%;
+
   margin: 0 auto;
   display: flex;
   justify-content: end;

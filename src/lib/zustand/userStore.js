@@ -1,5 +1,5 @@
 import create from 'zustand';
-import * as authAPI from 'lib/api/auth';
+import * as authAPI from 'lib/api/auth.js';
 import { persist } from 'zustand/middleware';
 
 export const userInfoStore = create(

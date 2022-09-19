@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import Editor from 'components/Board/Editor';
+import Editor from 'components/Board/Editor.js';
 import oc from 'open-color';
 
 const Container = styled.div`

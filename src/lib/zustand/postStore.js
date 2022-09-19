@@ -1,5 +1,5 @@
 import create from 'zustand';
-import * as postAPI from 'lib/api/post';
+import * as postAPI from 'lib/api/post.js';
 import { persist } from 'zustand/middleware';
 
 export const postStore = create(
@@ -26,6 +26,7 @@ export const postStore = create(
       getPosts: async (type) => {
         const res = await postAPI.getPosts(type);
         if (res.status === 200) set({ postsList: res.data.reverse() });
+        return res;
       },
 
       removePost: async (id) => {

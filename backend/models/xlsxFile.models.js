@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const Schema = mongoose.Schema;
 
@@ -9,4 +9,4 @@ const xlsxFile = new Schema({
 
 const XlsxFile = mongoose.model('XlsxFile', xlsxFile);
 
-module.exports = XlsxFile;
+export default XlsxFile;

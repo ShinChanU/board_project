@@ -1,11 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
 import oc from 'open-color';
-import { postStore } from 'lib/zustand/postStore';
+import { postStore } from 'lib/zustand/postStore.js';
 
 const Container = styled.div`
   max-width: 1300px;
-  margin: 0 auto;
+  margin: 20px auto;
   padding: 0px 20px;
 `;
 

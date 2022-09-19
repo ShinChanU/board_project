@@ -1,9 +1,9 @@
 import axios from 'axios';
-import { postStore } from 'lib/zustand/postStore';
+import { postStore } from 'lib/zustand/postStore.js';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import styled, { css } from 'styled-components';
-import NoticeTemplate from './BoardTemplate';
+import NoticeTemplate from './BoardTemplate.js';
 import * as XLSX from 'xlsx';
 import WriteBoard from './WriteBoard.js';
 import { useNavigate } from 'react-router-dom';
@@ -12,18 +12,21 @@ import oc from 'open-color';
 const Container = styled.div`
   width: 100%;
   background: white;
-  border: 1px solid black;
+  border: 2px solid ${oc.indigo[1]};
   border-radius: 10px;
-  padding: 0px 20px;
+  /* padding: 0px 40px; */
 
   margin: 20px 0px;
+  > div {
+    padding: 0px 40px;
+  }
 `;
 
 const Contents = styled.div`
-  width: 100%;
+  /* width: 100%;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: center; */
 `;
 
 const Header = styled.div`
@@ -35,7 +38,8 @@ const Header = styled.div`
 `;
 
 const Title = styled.div`
-  flex: 1;
+  margin: 20px 0px;
+  /* flex: 1; */
   font-size: 24px;
   font-weight: 550;
   text-align: center;
@@ -44,30 +48,60 @@ const Title = styled.div`
 const Sub = styled.div`
   font-weight: 400;
   font-size: 13px;
+  width: 100%;
+  /* display: flex; */
+  /* flex-direction: column; */
+  /* justify-content: right; */
+  padding: 0px 40px;
 
+  div {
+    /* text-align: right; */
+    width: auto;
+  }
   span {
     font-weight: 550;
   }
 `;
 
 const Body = styled.div`
-  width: 80%;
-  border: 1px solid black;
-  border-radius: 10px;
+  width: 100%;
+  background: ${oc.indigo[1]};
   margin: 20px 0px;
 
   > div {
     /* text-align: center; */
-    padding: 0px 20px;
+    padding: 20px 20px;
+
     width: 100%;
     overflow: auto;
+    /* border: 1px solid black; */
+    /* border-radius: 10px; */
   }
 `;
 
 const Files = styled.div`
-  width: 80%;
+  width: 100%;
   font-size: 20px;
   margin-bottom: 20px;
+
+  button {
+    padding: 5px 10px;
+    border-radius: 10px;
+    background: none;
+    font-size: 15px;
+    margin-top: 10px;
+    cursor: pointer;
+    border: 2px solid ${oc.gray[5]};
+    :hover {
+      background: ${oc.indigo[7]};
+      color: white;
+      border-color: ${oc.indigo[7]};
+      transition: 0.1s linear;
+    }
+    :active {
+      transform: translateY(5px);
+    }
+  }
 `;
 
 const FlexDiv = styled.div`
@@ -104,24 +138,37 @@ const BoardDetail = ({ user, type }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log('test');
     (async () => {
       let res = await getDetailPost('notice', id);
       setPost(res);
     })();
   }, [getDetailPost, id, isWrite]);
 
-  console.log(post);
-
   const downLoadFile = async (fileName, fileId) => {
-    const res = await axios.get(`/posts/download/${fileId}`);
-    if (res.status === 200) {
-      const worksheet = XLSX.utils.json_to_sheet(res.data.data);
-      const workbook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
-      XLSX.writeFile(workbook, `${fileName}`);
+    let res;
+    if (fileName === fileId) {
+      let resultDate;
+      let [year, monCycle] = fileName.split(' ')[0].split('년_');
+      let secDate;
+      if (monCycle.includes('월')) {
+        secDate = monCycle.split('월')[0];
+        resultDate = `${year}_${secDate}-mon`;
+      }
+      res = await axios.get(`/posts/download/result/${resultDate}`);
     } else {
-      alert('파일 다운에 실패했습니다.');
+      res = await axios.get(`/posts/download/${fileId}`);
+    }
+    if (res) {
+      if (res.status === 200) {
+        const worksheet = XLSX.utils.json_to_sheet(res.data.data);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
+        XLSX.writeFile(workbook, `${fileName}`);
+      } else {
+        alert('파일 다운에 실패했습니다.');
+      }
+    } else {
+      console.log('res없음');
     }
   };
 
@@ -163,53 +210,51 @@ const BoardDetail = ({ user, type }) => {
       )}
       {!isWrite && post && (
         <Container>
-          <Contents>
-            <Header>
-              <Title>{post.title}</Title>
-              <Sub>
-                <div>
-                  <span>작성자</span> {post.author}
-                </div>
-                {post.author !== 'admin' && (
-                  <div>
-                    <span>회사코드</span> {post.companyCode}
-                  </div>
-                )}
-                <div>
-                  <span>작성일</span>
-                  {post.createdAt.substr(0, 16).replace('T', ' ')}
-                </div>
-                {post.updatedAt && (
-                  <div>
-                    <span>최근 수정일</span>
-                    {post.updatedAt.substr(0, 16).replace('T', ' ')}
-                  </div>
-                )}
-                <div>
-                  <span>조회수</span> {post.views}
-                </div>
-              </Sub>
-            </Header>
-            {post.body && (
-              <Body>
-                <div dangerouslySetInnerHTML={{ __html: post.body }} />
-              </Body>
+          {/* <Header> */}
+          <Title>{post.title}</Title>
+          <Sub>
+            <div>
+              <span>작성자</span> {post.author}
+            </div>
+            {post.author !== 'admin' && (
+              <div>
+                <span>회사코드</span> {post.companyCode}
+              </div>
             )}
-            {!!post.orgFileName.length && (
-              <Files>
-                첨부파일(다운로드)
-                {post.orgFileName.map((file, i) => (
-                  <div key={i}>
-                    <button
-                      onClick={() => downLoadFile(file, post.saveFileName[i])}
-                    >
-                      {file}
-                    </button>
-                  </div>
-                ))}
-              </Files>
+            <div>
+              <span>작성일</span>
+              {post.createdAt.substr(0, 16).replace('T', ' ')}
+            </div>
+            {post.updatedAt && (
+              <div>
+                <span>최근 수정일</span>
+                {post.updatedAt.substr(0, 16).replace('T', ' ')}
+              </div>
             )}
-          </Contents>
+            <div>
+              <span>조회수</span> {post.views}
+            </div>
+          </Sub>
+          {/* </Header> */}
+          {post.body && (
+            <Body>
+              <div dangerouslySetInnerHTML={{ __html: post.body }} />
+            </Body>
+          )}
+          {!!post.orgFileName.length && (
+            <Files>
+              첨부파일(다운로드)
+              {post.orgFileName.map((file, i) => (
+                <div key={i}>
+                  <button
+                    onClick={() => downLoadFile(file, post.saveFileName[i])}
+                  >
+                    📄 {file}
+                  </button>
+                </div>
+              ))}
+            </Files>
+          )}
         </Container>
       )}
       {!post && <>Loading...</>}
