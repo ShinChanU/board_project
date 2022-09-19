@@ -1,15 +1,18 @@
 import React from 'react';
-import { userInfoStore, userStore } from 'lib/zustand/userStore';
+import { userInfoStore, userStore } from 'lib/zustand/userStore.js';
 import { Link } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 import oc from 'open-color';
 
 const Container = styled.div`
+  width: 100%;
   background: ${oc.indigo[0]};
   padding: 0px 30px;
 `;
 
 const Header = styled.header`
+  width: 100%;
+
   margin: 0 auto;
   display: flex;
   justify-content: end;
@@ -76,8 +79,9 @@ const NavBar = () => {
             <Span>{user.realName}</Span> 님 환영합니다!
           </Div>
           <div>
-            <LinkDiv to="/notice">📌공지사항</LinkDiv>
-            <LinkDiv to="/board">📈자료취합게시판</LinkDiv>
+            <LinkDiv to="/noticeBoard">📌공지사항</LinkDiv>
+            <LinkDiv to="/dataBoard">📈자료취합게시판</LinkDiv>
+            <LinkDiv to="/etcBoard">🌟자유게시판</LinkDiv>
             <Button onClick={logout}>로그아웃</Button>
           </div>
         </Header>

@@ -1,10 +1,14 @@
-const express = require('express');
-const cookieParser = require('cookie-parser');
-const cors = require('cors');
-const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
 require('dotenv').config();
-const jwtMiddleware = require('./lib/jwtMiddleware');
+import express from 'express';
+import cookieParser from 'cookie-parser';
+import cors from 'cors';
+import mongoose from 'mongoose';
+import bodyParser from 'body-parser';
+import jwtMiddleware from './lib/jwtMiddleware.js';
+import postsRouter from './router/posts.js';
+import authRouter from './router/auth.js';
+
+const { ATLAS_URI } = process.env;
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -23,15 +27,11 @@ app.use(
   }),
 );
 
-const uri = process.env.ATLAS_URI;
-mongoose.connect(uri);
+mongoose.connect(ATLAS_URI);
 const connection = mongoose.connection;
 connection.once('open', () => {
   console.log('MongoDB database connection established successfully');
 });
-
-const postsRouter = require('./router/posts');
-const authRouter = require('./router/auth');
 
 app.use('/posts', postsRouter);
 app.use('/auth', authRouter);

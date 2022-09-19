@@ -1,17 +1,19 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
-import MainPage from 'pages/MainPage';
-import SignupPage from 'pages/SignupPage';
-import LoginPage from 'pages/LoginPage';
+import SignupPage from 'pages/Auth/SignupPage.js';
+import LoginPage from 'pages/Auth/LoginPage.js';
 import styled from 'styled-components';
-import NavBar from 'components/NavBar';
-import BoardPage from 'pages/BoardPage';
+import NavBar from 'components/common/NavBar.js';
 import OpenColor from 'open-color';
-import NoticePage from 'pages/NoticePage';
+import BoardPage from 'pages/Board/BoardPage.js';
 
 const Container = styled.div`
   min-height: 100vh;
+  width: 100%;
   background: ${OpenColor.indigo[1]};
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 `;
 
 const Header = styled(Link)`
@@ -29,15 +31,14 @@ function App() {
     <BrowserRouter>
       <Container>
         <NavBar />
-        <Header to="/">Web Project</Header>
+        <Header to="/">Board Project</Header>
         <Routes>
-          {/* <Route path="/" element={<MainPage />}> */}
-          {/* 0809 회원인증 라우터 필요 */}
-          <Route path="/" element={<NoticePage />} />
+          <Route path="/" element={<BoardPage type="notice" />} />
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/login" element={<LoginPage />} />
-          <Route path="/notice/*" element={<NoticePage />} />
-          <Route path="/board" element={<BoardPage />} />
+          <Route path="/noticeBoard/*" element={<BoardPage type="notice" />} />
+          <Route path="/dataBoard/*" element={<BoardPage type="data" />} />
+          <Route path="/etcBoard/*" element={<BoardPage type="etc" />} />
         </Routes>
       </Container>
     </BrowserRouter>
