@@ -5,7 +5,6 @@ import OpenColor from 'open-color';
 import { userInfoStore, userStore } from 'lib/zustand/userStore.js';
 
 const AuthContainer = styled.div`
-  /* min-height: 100vh; */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -13,7 +12,6 @@ const AuthContainer = styled.div`
 `;
 
 const Container = styled.div`
-  margin-top: 70px;
   background: ${OpenColor.gray[1]};
   border-radius: 10px;
   box-shadow: 0px 0px 4px ${OpenColor.indigo[3]};
@@ -149,7 +147,7 @@ const AuthForm = ({ type, authForm }) => {
       <Container>
         <Title>{siteObj[type]}</Title>
         <InputContainer>
-          {Object.keys(authForm).map((key, i) => {
+          {Object.keys(authForm).map((key) => {
             if (authForm[key].type === 'select') {
               return (
                 <Select

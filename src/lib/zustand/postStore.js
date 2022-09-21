@@ -15,18 +15,37 @@ export const postStore = create(
         etc: '자유 게시판',
       },
 
-      // 세부 게시글 조회
-      getDetailPost: async (category, id) => {
-        const res = await postAPI.getPost(category, id);
-        if (res.status === 200) return res.data;
-        else return 0;
+      sortPostList: (list) => {
+        return list.sort((a, b) => {
+          const timeA = a.createdAt.replace(/-|T|:/g, '').slice(0, 14);
+          const timeB = b.createdAt.replace(/-|T|:/g, '').slice(0, 14);
+          return timeB - timeA;
+        });
       },
 
       // 메뉴별 게시글 전체 조회
       getPosts: async (type) => {
         const res = await postAPI.getPosts(type);
-        if (res.status === 200) set({ postsList: res.data.reverse() });
+
+        if (res.status === 200) {
+          let postsList = [];
+          if (type === 'data') {
+            res.data.forEach((arr) => {
+              postsList.push(...get().sortPostList(arr.data));
+            });
+          } else {
+            postsList = get().sortPostList(res.data);
+          }
+          set({ postsList });
+        }
         return res;
+      },
+
+      // 세부 게시글 조회
+      getDetailPost: async (category, id) => {
+        const res = await postAPI.getPost(category, id);
+        if (res.status === 200) return res.data;
+        else return 0;
       },
 
       removePost: async (id) => {

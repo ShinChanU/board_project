@@ -66,15 +66,7 @@ const SaveFiles = styled.div`
   display: flex;
 `;
 
-const WriteBoard = ({
-  close,
-  postPosts,
-  user,
-  id,
-  postData,
-  deleteFile,
-  type,
-}) => {
+const WriteBoard = ({ close, postPosts, id, postData, deleteFile, type }) => {
   const [post, setPost] = useState({
     title: '',
     body: '', // text이지만 html
@@ -86,8 +78,6 @@ const WriteBoard = ({
   });
   const [err, setErr] = useState(null);
   const [files, setFiles] = useState(undefined);
-  const [postCates, setPostCates] = useState();
-  const { userType } = user;
 
   useEffect(() => {
     if (!postData) return;
@@ -98,7 +88,6 @@ const WriteBoard = ({
       body,
       category,
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [postData]);
 
   useEffect(() => {
@@ -107,21 +96,6 @@ const WriteBoard = ({
       category: type,
     });
   }, [type]);
-
-  useEffect(() => {
-    if (userType === 'top') {
-      setPostCates({
-        data: '자료 게시판',
-        etc: '자유 게시판',
-      });
-    } else if (userType === 'admin') {
-      setPostCates({
-        notice: '공지사항',
-        etc: '자유 게시판',
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userType]);
 
   const onChangeValue = (e) => {
     const { name, value } = e.target;
@@ -182,27 +156,6 @@ const WriteBoard = ({
             onChange={onChangeValue}
           />
         </Div>
-        {/* {postCates && type && (
-          <Div>
-            업로드 게시판
-            <select
-              name="category"
-              onChange={onChangeValue}
-              defaultValue={postCates[type]}
-            >
-              <option value="default" disabled>
-                게시판을 선택해주세요.
-              </option>
-              {Object.keys(postCates).map((e) => {
-                return (
-                  <option key={e} value={e}>
-                    {postCates[e]}
-                  </option>
-                );
-              })}
-            </select>
-          </Div>
-        )} */}
         <Editor value={post.body} onChange={onChangeValue} />
         <Div>
           <label htmlFor="files">첨부 파일</label>
@@ -234,6 +187,3 @@ const WriteBoard = ({
 };
 
 export default WriteBoard;
-
-// 0813
-// 게시글 수정 완료 후 처리 해야함

@@ -3,6 +3,7 @@ import { userInfoStore, userStore } from 'lib/zustand/userStore.js';
 import { Link } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 import oc from 'open-color';
+import logo from 'lib/images/structure.png';
 
 const Container = styled.div`
   width: 100%;
@@ -15,12 +16,7 @@ const Header = styled.header`
 
   margin: 0 auto;
   display: flex;
-  justify-content: end;
-  ${(props) =>
-    props.user &&
-    css`
-      justify-content: space-between;
-    `}
+  justify-content: space-between;
   max-width: 1300px;
   padding: 10px 0px;
   height: 40px;
@@ -31,12 +27,16 @@ const TagStyle = css`
   font-size: 20px;
   font-weight: 550;
   margin-left: 20px;
+`;
+
+const LinkStyle = css`
   text-decoration: none;
   color: black;
 `;
 
 const LinkDiv = styled(Link)`
   ${TagStyle};
+  ${LinkStyle};
   :hover {
     color: ${oc.indigo[4]};
     transition: 0.3s;
@@ -55,6 +55,16 @@ const Button = styled.button`
 
 const Div = styled.div`
   ${TagStyle};
+  img {
+    width: 30px;
+    height: 30px;
+    margin-right: 10px;
+  }
+`;
+
+const IconLink = styled(Link)`
+  display: flex;
+  ${LinkStyle};
 `;
 
 const Span = styled.span`
@@ -69,14 +79,26 @@ const NavBar = () => {
     <Container>
       {!user && (
         <Header>
-          <LinkDiv to="/login">로그인</LinkDiv>
-          <LinkDiv to="/signup">회원가입</LinkDiv>
+          <Div>
+            <IconLink to="/">
+              <img src={logo} alt="icon" />
+              Excel Gathering System
+            </IconLink>
+          </Div>
+          {/* <Span>asdf</Span> 님 환영합니다! */}
+          <div>
+            <LinkDiv to="/login">로그인</LinkDiv>
+            <LinkDiv to="/signup">회원가입</LinkDiv>
+          </div>
         </Header>
       )}
       {user && (
         <Header user>
           <Div>
-            <Span>{user.realName}</Span> 님 환영합니다!
+            <IconLink to="/">
+              <img src={logo} alt="icon" />
+              <Span>{user.realName}</Span> 님 환영합니다!
+            </IconLink>
           </Div>
           <div>
             <LinkDiv to="/noticeBoard">📌공지사항</LinkDiv>

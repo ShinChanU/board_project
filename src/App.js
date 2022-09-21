@@ -1,11 +1,11 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
-import SignupPage from 'pages/Auth/SignupPage.js';
-import LoginPage from 'pages/Auth/LoginPage.js';
+import SignupPage from 'pages/Auth/SignupPage';
+import LoginPage from 'pages/Auth/LoginPage';
 import styled from 'styled-components';
-import NavBar from 'components/common/NavBar.js';
+import NavBar from 'components/common/NavBar';
 import OpenColor from 'open-color';
-import BoardPage from 'pages/Board/BoardPage.js';
+import BoardPage from 'pages/Board/BoardPage';
 
 const Container = styled.div`
   min-height: 100vh;
@@ -31,7 +31,7 @@ function App() {
     <BrowserRouter>
       <Container>
         <NavBar />
-        <Header to="/">Board Project</Header>
+        <Header to="/">엑셀 취합 시스템</Header>
         <Routes>
           <Route path="/" element={<BoardPage type="notice" />} />
           <Route path="/signup" element={<SignupPage />} />

@@ -22,21 +22,6 @@ const Container = styled.div`
   }
 `;
 
-const Contents = styled.div`
-  /* width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center; */
-`;
-
-const Header = styled.div`
-  display: flex;
-  justify-content: space-between;
-  margin: 20px 0px;
-  align-items: center;
-  width: 100%;
-`;
-
 const Title = styled.div`
   margin: 20px 0px;
   /* flex: 1; */
@@ -275,5 +260,3 @@ const BoardDetail = ({ user, type }) => {
 };
 
 export default BoardDetail;
-
-// https://developer-talk.tistory.com/328

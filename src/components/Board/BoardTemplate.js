@@ -7,6 +7,7 @@ const Container = styled.div`
   max-width: 1300px;
   margin: 20px auto;
   padding: 0px 20px;
+  width: 100%;
 `;
 
 const FlexBox = styled.div`

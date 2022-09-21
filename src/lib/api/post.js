@@ -22,7 +22,7 @@ export const getPosts = async (type) => {
     if (type === 'data') {
       let data = await axios.get(`/posts/data`);
       let result = await axios.get(`/posts/result`);
-      return (res = { status: 200, data: [...data.data, ...result.data] });
+      return (res = { status: 200, data: [result, data] });
     } else {
       res = await axios.get(`/posts/${type}`);
     }

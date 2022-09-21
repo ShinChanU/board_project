@@ -4,6 +4,7 @@
     "es6": true,
     "node": true
   },
+  "plugins": ["eslint-plugin-react"],
   "extends": ["eslint:recommend", "prettier"],
   "globals": {
     "Atomics": "readonly",
