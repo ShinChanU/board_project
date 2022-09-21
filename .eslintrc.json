@@ -4,14 +4,16 @@
     "es6": true,
     "node": true
   },
-  "extends": ["eslint:recommend", "prettier"],
+  "extends": ["plugin:@typescript-eslint/recommended", "prettier"],
   "globals": {
     "Atomics": "readonly",
     "SharedArrayBuffer": "readonly"
   },
+  "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "ecmaVersion": 2018,
-    "sourceType": "module"
+    "sourceType": "module",
+    "project": "./tsconfig.json"
   },
   "rules": {
     "no-unused-vars": "warn",
