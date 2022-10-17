@@ -1,5 +1,5 @@
 import React from 'react';
-// import { userInfoStore, userStore } from 'lib/zustand/userStore.js';
+// // import { userInfoStore, userStore } from 'lib/zustand/userStore.js';
 import { Link } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 import oc from 'open-color';
@@ -10,22 +10,23 @@ const Container = styled.div`
   padding: 0px 30px;
 `;
 
-// const Header = styled.header`
-//   width: 100%;
+const Header = styled.header`
+  width: 100%;
 
-//   margin: 0 auto;
-//   display: flex;
-//   justify-content: end;
-//   /* ${(props) =>
-//     props.user &&
-//     css`
-//       justify-content: space-between;
-//     `} */
-//   max-width: 1300px;
-//   padding: 10px 0px;
-//   height: 40px;
-//   align-items: center;
-// `;
+  margin: 0 auto;
+  display: flex;
+  justify-content: end;
+
+  max-width: 1300px;
+  padding: 10px 0px;
+  height: 40px;
+  align-items: center;
+`;
+/* ${(props) =>
+    props.user &&
+    css`
+      justify-content: space-between;
+    `} */
 
 const TagStyle = css`
   font-size: 20px;
@@ -43,23 +44,23 @@ const LinkDiv = styled(Link)`
   }
 `;
 
-const Button = styled.button`
-  border: none;
-  background: ${oc.indigo[0]};
-  ${TagStyle};
-  :hover {
-    color: ${oc.indigo[4]};
-    transition: 0.3s;
-  }
-`;
+// const Button = styled.button`
+//   border: none;
+//   background: ${oc.indigo[0]};
+//   ${TagStyle};
+//   :hover {
+//     color: ${oc.indigo[4]};
+//     transition: 0.3s;
+//   }
+// `;
 
-const Div = styled.div`
-  ${TagStyle};
-`;
+// const Div = styled.div`
+//   ${TagStyle};
+// `;
 
-const Span = styled.span`
-  color: ${oc.indigo[6]};
-`;
+// const Span = styled.span`
+//   color: ${oc.indigo[6]};
+// `;
 
 const NavBar = () => {
   // const { user } = userInfoStore();
@@ -67,6 +68,10 @@ const NavBar = () => {
 
   return (
     <Container>
+      <Header>
+        <LinkDiv to="/login">로그인</LinkDiv>
+        <LinkDiv to="/signup">회원가입</LinkDiv>
+      </Header>
       {/* {!user && (
         <Header>
           <LinkDiv to="/login">로그인</LinkDiv>

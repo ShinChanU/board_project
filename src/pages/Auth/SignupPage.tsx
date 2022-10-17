@@ -2,7 +2,9 @@ import React from 'react';
 import AuthForm from '../../components/Auth/AuthForm';
 // import { userStore } from 'lib/zustand/userStore.js';
 
-type InputData = 'placeHolder' | 'type' | 'value';
+type InputData = {
+  [key: string]: string;
+};
 
 interface SignUp {
   [key: string]: InputData;
@@ -39,7 +41,12 @@ const signup: SignUp = {
 const SignupPage = () => {
   // const { signup } = userStore();
 
-  return <AuthForm type="signup" authForm={signup} />;
+  return (
+    <AuthForm
+      type="signup"
+      // authForm={signup}
+    />
+  );
 };
 
 export default SignupPage;

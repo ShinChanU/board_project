@@ -5,7 +5,7 @@ export const postSignup = async ({
   password,
   companyCode,
   realName,
-}) => {
+}: any) => {
   try {
     const res = await axios.post('http://localhost:5000/auth/register', {
       username: username.value,

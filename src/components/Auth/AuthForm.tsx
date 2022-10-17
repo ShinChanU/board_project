@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 import OpenColor from 'open-color';
-// import { userInfoStore, userStore } from 'lib/zustand/userStore.js';
+import { userStore } from 'lib/zustand/userStore';
 
 const AuthContainer = styled.div`
   /* min-height: 100vh; */
@@ -109,21 +109,22 @@ const siteObj: SiteObj = {
 
 type TypeProps = {
   type: string;
-  authForm: object;
+  // authForm: any;
 };
 
-const AuthForm = ({ type, authForm }: TypeProps) => {
+const AuthForm = ({ type }: TypeProps) => {
+  // const [listOfForm, setListOfForm] = useState(Object.keys(authForm));
   // const next = type === 'login' ? 'signup' : 'login';
-  // const {
-  //   onChangeAuth,
-  //   companyCodes,
-  //   initAuthForm,
-  //   onSubmitAuth,
-  //   error,
-  //   signupCheck,
-  //   loginCheck,
-  //   checkAuth,
-  // } = userStore();
+  const {
+    // onChangeAuth,
+    companyCodes,
+    initAuthForm,
+    // onSubmitAuth,
+    error,
+    signUpCheck,
+    loginCheck,
+    // checkAuth,
+  } = userStore();
   // const { user } = userInfoStore();
   // const navigate = useNavigate();
 
@@ -133,11 +134,11 @@ const AuthForm = ({ type, authForm }: TypeProps) => {
   //   }
   // }, [user, navigate]);
 
-  // useEffect(() => {
-  //   return () => {
-  //     initAuthForm(type);
-  //   };
-  // }, [initAuthForm, type]);
+  useEffect(() => {
+    return () => {
+      initAuthForm(type);
+    };
+  }, [initAuthForm, type]);
 
   // useEffect(() => {
   //   if (signupCheck) {
@@ -157,43 +158,41 @@ const AuthForm = ({ type, authForm }: TypeProps) => {
   return (
     <AuthContainer>
       <Container>
-        <Title>{siteObj[type]}</Title>
-        <InputContainer>
+        <Title>{siteObj[type]}입니다</Title>
+        {/* <InputContainer>
           {Object.keys(authForm).map((key: string, i: number) => {
-            console.log(authForm[key]);
-            return <>asfd</>;
-            // if (authForm[key].type === 'select') {
-            //   return (
-            //     <Select
-            //       key={key}
-            //       onChange={(e) => onChangeAuth(type, key, e.target.value)}
-            //       defaultValue="default"
-            //     >
-            //       <option value="default" disabled>
-            //         회사를 선택해주세요. (회사명/회사코드)
-            //       </option>
-            //       {Object.keys(companyCodes).map((e) => (
-            //         <option value={companyCodes[e]} key={e}>
-            //           {e}
-            //         </option>
-            //       ))}
-            //       <option value="etc">회사코드 직접 입력</option>
-            //     </Select>
-            //   );
-            // } else {
-            //   return (
-            //     <Input
-            //       key={key}
-            //       placeholder={authForm[key].placeHolder}
-            //       type={authForm[key].type}
-            //       value={authForm[key].value}
-            //       onChange={(e) => onChangeAuth(type, key, e.target.value)}
-            //       maxLength={authForm[key].max}
-            //     />
-            //   );
-            // }
+            if (authForm[key].type === 'select') {
+              return (
+                <Select
+                  key={key}
+                  onChange={(e) => onChangeAuth(type, key, e.target.value)}
+                  defaultValue="default"
+                >
+                  <option value="default" disabled>
+                    회사를 선택해주세요. (회사명/회사코드)
+                  </option>
+                  {Object.keys(companyCodes).map((e) => (
+                    <option value={companyCodes[e]} key={e}>
+                      {e}
+                    </option>
+                  ))}
+                  <option value="etc">회사코드 직접 입력</option>
+                </Select>
+              );
+            } else {
+              return (
+                <Input
+                  key={key}
+                  placeholder={authForm[key].placeHolder}
+                  type={authForm[key].type}
+                  value={authForm[key].value}
+                  onChange={(e) => onChangeAuth(type, key, e.target.value)}
+                  maxLength={authForm[key].max}
+                />
+              );
+            }
           })}
-        </InputContainer>
+        </InputContainer> */}
         {/* <Error>{error}</Error> */}
 
         {/* <Button onClick={() => onSubmitAuth(type)}>{siteObj[type]}</Button> */}
