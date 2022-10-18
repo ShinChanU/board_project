@@ -1,10 +1,15 @@
-import { postStore } from 'lib/zustand/postStore.js';
-import React, { useEffect, useState } from 'react';
+// import { postStore } from 'lib/zustand/postStore.js';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import Article from './Article.js';
+// import Article from './Article.js';
 import oc from 'open-color';
-import WriteBoard from './WriteBoard.js';
-import NoticeTemplate from './BoardTemplate.js';
+import { postStore } from 'lib/zustand/postStore';
+import BoardTemplate from './BoardTemplate';
+import WriteBoard from './WriteBoard';
+import Article from './Article';
+import { BoardUserTypeProps } from 'interfaces/Board.interface';
+// import WriteBoard from './WriteBoard.js';
+// import NoticeTemplate from './BoardTemplate.js';
 
 const columns = ['번호', '분류', '작성자', '제목', '등록일', '조회수'];
 
@@ -37,10 +42,10 @@ const Table = styled.table`
   }
 `;
 
-const BoardList = ({ user, type }) => {
-  const { postsList, getPosts, postPosts } = postStore();
-  const [isWrite, setIsWrite] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+const BoardList = ({ user, type }: BoardUserTypeProps) => {
+  const [isWrite, setIsWrite] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { postsList, getPosts } = postStore();
 
   useEffect(() => {
     setIsLoading(false);
@@ -60,7 +65,7 @@ const BoardList = ({ user, type }) => {
   };
 
   return (
-    <NoticeTemplate
+    <BoardTemplate
       isWrite={isWrite}
       onChangeWrite={onChangeWrite}
       user={user}
@@ -72,7 +77,7 @@ const BoardList = ({ user, type }) => {
         {isWrite && (
           <WriteBoard
             close={onChangeWrite}
-            postPosts={postPosts}
+            // postPosts={postPosts}
             user={user}
             type={type}
           />
@@ -87,14 +92,14 @@ const BoardList = ({ user, type }) => {
               </tr>
             </thead>
             <tbody>
-              {postsList.map((post, i) => (
+              {postsList.map((post: any, i: any) => (
                 <Article post={post} key={post._id} idx={i + 1} type={type} />
               ))}
             </tbody>
           </Table>
         )}
       </>
-    </NoticeTemplate>
+    </BoardTemplate>
   );
 };
 

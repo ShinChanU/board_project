@@ -1,9 +1,7 @@
-import React from 'react';
-import { userInfoStore, userStore } from 'lib/zustand/userStore.js';
 import { Link } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 import oc from 'open-color';
-import logo from 'lib/images/structure.png';
+import { userInfoStore, userStore } from 'lib/zustand/userStore';
 
 const Container = styled.div`
   width: 100%;
@@ -11,16 +9,23 @@ const Container = styled.div`
   padding: 0px 30px;
 `;
 
-const Header = styled.header`
+const Header = styled.header<any>`
   width: 100%;
 
   margin: 0 auto;
   display: flex;
-  justify-content: space-between;
+  justify-content: end;
+
   max-width: 1300px;
   padding: 10px 0px;
   height: 40px;
   align-items: center;
+
+  ${(props) =>
+    props.user &&
+    css`
+      justify-content: space-between;
+    `}
 `;
 
 const TagStyle = css`
@@ -79,24 +84,15 @@ const NavBar = () => {
     <Container>
       {!user && (
         <Header>
-          <Div>
-            <IconLink to="/">
-              <img src={logo} alt="icon" />
-              Excel Gathering System
-            </IconLink>
-          </Div>
-          {/* <Span>asdf</Span> 님 환영합니다! */}
-          <div>
-            <LinkDiv to="/login">로그인</LinkDiv>
-            <LinkDiv to="/signup">회원가입</LinkDiv>
-          </div>
+          <LinkDiv to="/login">로그인</LinkDiv>
+          <LinkDiv to="/signUp">회원가입</LinkDiv>
         </Header>
       )}
       {user && (
         <Header user>
           <Div>
             <IconLink to="/">
-              <img src={logo} alt="icon" />
+              {/* <img src={logo} alt="icon" /> */}
               <Span>{user.realName}</Span> 님 환영합니다!
             </IconLink>
           </Div>

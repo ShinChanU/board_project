@@ -1,8 +1,9 @@
-import React, { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 import OpenColor from 'open-color';
-import { userInfoStore, userStore } from 'lib/zustand/userStore.js';
+import { userInfoStore, userStore } from 'lib/zustand/userStore';
+import { AuthFormProps } from 'interfaces/User.interface';
 
 const AuthContainer = styled.div`
   display: flex;
@@ -95,20 +96,30 @@ const Error = styled.div`
   margin-bottom: 20px;
 `;
 
-const siteObj = {
-  login: '로그인',
-  signup: '회원가입',
+// key가 string으로 접근은 불가함([key: string]: string)
+type SiteObj = {
+  [key: string]: string;
 };
 
-const AuthForm = ({ type, authForm }) => {
-  const next = type === 'login' ? 'signup' : 'login';
+const siteObj: SiteObj = {
+  login: '로그인',
+  signUp: '회원가입',
+};
+
+type TypeProps = {
+  type: string;
+  authForm: AuthFormProps;
+};
+
+const AuthForm = ({ type, authForm }: TypeProps) => {
+  const next = type === 'login' ? 'signUp' : 'login';
   const {
     onChangeAuth,
     companyCodes,
     initAuthForm,
     onSubmitAuth,
     error,
-    signupCheck,
+    signUpCheck,
     loginCheck,
     checkAuth,
   } = userStore();
@@ -128,7 +139,7 @@ const AuthForm = ({ type, authForm }) => {
   }, [initAuthForm, type]);
 
   useEffect(() => {
-    if (signupCheck) {
+    if (signUpCheck) {
       alert('회원가입이 완료되었습니다.');
       navigate('/login');
       initAuthForm(type);
@@ -140,14 +151,14 @@ const AuthForm = ({ type, authForm }) => {
       checkAuth();
       return;
     }
-  }, [signupCheck, navigate, initAuthForm, type, checkAuth, loginCheck]);
+  }, [signUpCheck, navigate, initAuthForm, type, checkAuth, loginCheck]);
 
   return (
     <AuthContainer>
       <Container>
-        <Title>{siteObj[type]}</Title>
+        <Title>{siteObj[type]}입니다</Title>
         <InputContainer>
-          {Object.keys(authForm).map((key) => {
+          {Object.keys(authForm).map((key: string, i: number) => {
             if (authForm[key].type === 'select') {
               return (
                 <Select
@@ -174,14 +185,13 @@ const AuthForm = ({ type, authForm }) => {
                   type={authForm[key].type}
                   value={authForm[key].value}
                   onChange={(e) => onChangeAuth(type, key, e.target.value)}
-                  maxLength={authForm[key].max}
+                  // maxLength={authForm[key].max}
                 />
               );
             }
           })}
         </InputContainer>
         <Error>{error}</Error>
-
         <Button onClick={() => onSubmitAuth(type)}>{siteObj[type]}</Button>
         <LinkDiv to={`/${next}`}>{siteObj[next]}</LinkDiv>
       </Container>

@@ -1,10 +1,9 @@
-import React from 'react';
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
-import SignupPage from 'pages/Auth/SignupPage';
-import LoginPage from 'pages/Auth/LoginPage';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import styled from 'styled-components';
-import NavBar from 'components/common/NavBar';
 import OpenColor from 'open-color';
+import LoginPage from './pages/Auth/LoginPage';
+import NavBar from './components/common/NavBar';
+import SignUpPage from 'pages/Auth/SignUpPage';
 import BoardPage from 'pages/Board/BoardPage';
 
 const Container = styled.div`
@@ -28,20 +27,20 @@ const Header = styled(Link)`
 
 function App() {
   return (
-    <BrowserRouter>
-      <Container>
+    <Container>
+      <Router>
         <NavBar />
         <Header to="/">엑셀 취합 시스템</Header>
         <Routes>
           <Route path="/" element={<BoardPage type="notice" />} />
-          <Route path="/signup" element={<SignupPage />} />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/signUp" element={<SignUpPage />} />
           <Route path="/noticeBoard/*" element={<BoardPage type="notice" />} />
           <Route path="/dataBoard/*" element={<BoardPage type="data" />} />
           <Route path="/etcBoard/*" element={<BoardPage type="etc" />} />
         </Routes>
-      </Container>
-    </BrowserRouter>
+      </Router>
+    </Container>
   );
 }
 

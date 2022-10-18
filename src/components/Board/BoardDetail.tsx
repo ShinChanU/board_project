@@ -1,13 +1,17 @@
+import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { postStore } from 'lib/zustand/postStore.js';
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
 import styled, { css } from 'styled-components';
-import NoticeTemplate from './BoardTemplate.js';
-import * as XLSX from 'xlsx';
-import WriteBoard from './WriteBoard.js';
 import { useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
+import {
+  BoardDetailDataProps,
+  BoardUserTypeProps,
+} from 'interfaces/Board.interface';
+import { postStore } from 'lib/zustand/postStore';
+import BoardTemplate from './BoardTemplate';
 import oc from 'open-color';
+import * as XLSX from 'xlsx';
+import WriteBoard from './WriteBoard';
 
 const Container = styled.div`
   width: 100%;
@@ -95,7 +99,7 @@ const FlexDiv = styled.div`
   justify-content: flex-end;
 `;
 
-const Button = styled.button`
+const Button = styled.button<any>`
   background: ${oc.indigo[5]};
   color: white;
   border: none;
@@ -106,30 +110,25 @@ const Button = styled.button`
   padding: 10px 0px;
   margin-left: 10px;
   cursor: pointer;
-
-  ${(props) =>
-    props.del &&
-    css`
-      background: ${oc.red[7]};
-    `}
 `;
 
-const BoardDetail = ({ user, type }) => {
+const BoardDetail = ({ user, type }: BoardUserTypeProps) => {
   const { id } = useParams();
   const { getDetailPost, removePost, postPosts } = postStore();
-  const [post, setPost] = useState(null);
-  const { username } = user;
+  const [post, setPost] = useState<BoardDetailDataProps | null>(null);
   const [isWrite, setIsWrite] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    (async () => {
-      let res = await getDetailPost('notice', id);
-      setPost(res);
-    })();
+    if (id) {
+      (async () => {
+        let res = await getDetailPost('notice', id);
+        setPost(res);
+      })();
+    }
   }, [getDetailPost, id, isWrite]);
 
-  const downLoadFile = async (fileName, fileId) => {
+  const downLoadFile = async (fileName: string, fileId: string) => {
     let res;
     if (fileName === fileId) {
       let resultDate;
@@ -158,37 +157,43 @@ const BoardDetail = ({ user, type }) => {
   };
 
   const onClickDelPost = async () => {
-    let res = await removePost(id);
-    if (res) {
-      alert('게시글이 삭제되었습니다.');
-      navigate(-1);
-    }
+    if (id) {
+      let res = await removePost(type, id);
+      if (res) {
+        alert('게시글이 삭제되었습니다.');
+        navigate(-1);
+      } else {
+        alert('삭제 실패!');
+      }
+    } else alert('게시글의 id가 없습니다.');
   };
 
   const onChangeWrite = () => {
     setIsWrite(!isWrite);
   };
 
-  const delSaveFile = (i) => {
-    let tmpOrgNames = post.orgFileName.slice();
-    let tmpSaveNames = post.saveFileName.slice();
-    tmpOrgNames.splice(i, 1);
-    tmpSaveNames.splice(i, 1);
-    setPost({
-      ...post,
-      orgFileName: tmpOrgNames,
-      saveFileName: tmpSaveNames,
-    });
+  const delSaveFile = (i: number) => {
+    if (post) {
+      let tmpOrgNames = post.orgFileName.slice();
+      let tmpSaveNames = post.saveFileName.slice();
+      tmpOrgNames.splice(i, 1);
+      tmpSaveNames.splice(i, 1);
+      setPost({
+        ...post,
+        orgFileName: tmpOrgNames,
+        saveFileName: tmpSaveNames,
+      });
+    }
   };
 
   return (
-    <NoticeTemplate type={type}>
+    <BoardTemplate type={type}>
       {isWrite && (
         <WriteBoard
           close={onChangeWrite}
           postPosts={postPosts}
           user={user}
-          id={post._id}
+          id={post?._id}
           postData={post}
           deleteFile={delSaveFile}
         />
@@ -245,17 +250,17 @@ const BoardDetail = ({ user, type }) => {
       {!post && <>Loading...</>}
       {!isWrite && post && (
         <FlexDiv>
-          {post.author === username && (
+          {post.author === user?.username && (
             <Button onClick={onChangeWrite}>수정하기</Button>
           )}
-          {(post.author === username || username === 'admin') && (
+          {(post.author === user?.username || user?.username === 'admin') && (
             <Button del onClick={onClickDelPost}>
               삭제하기
             </Button>
           )}
         </FlexDiv>
       )}
-    </NoticeTemplate>
+    </BoardTemplate>
   );
 };
 
