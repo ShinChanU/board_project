@@ -18,7 +18,7 @@ interface PostProps {
     formData: FormData,
     postData: BoardDetailDataProps,
     type: string,
-  ) => Promise<[boolean, string?]>;
+  ) => Promise<[boolean, string]>;
 }
 
 export const postStore = create<PostProps, any>(
@@ -44,9 +44,10 @@ export const postStore = create<PostProps, any>(
       // 메뉴별 게시글 전체 조회
       getPosts: async (type) => {
         const res = await postAPI.getCategoryPosts(type);
-        if (res.status === 200) set({ postsList: res.data.reverse() });
-        // console.log(res);
-        // return res;
+        console.log(res);
+        if (res) {
+          set({ postsList: res });
+        }
       },
 
       removePost: async (type: string, id: string) => {
@@ -61,6 +62,7 @@ export const postStore = create<PostProps, any>(
       },
 
       postPosts: async (id, data, postData, type) => {
+        console.log(id, data, postData, type);
         let res;
         if (!id) {
           res = await postAPI.createPostData(data);
@@ -70,7 +72,7 @@ export const postStore = create<PostProps, any>(
         }
         if (res.status === 200) {
           get().getPosts(type);
-          return [true];
+          return [true, ''];
         } else if (res.status === 400) {
           return [false, res.data.message];
         } else {
@@ -84,3 +86,5 @@ export const postStore = create<PostProps, any>(
     },
   ),
 );
+
+// 1018 백엔드에서 보내줄때 등록일 기준

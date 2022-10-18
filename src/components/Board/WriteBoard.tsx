@@ -3,6 +3,7 @@ import styled from 'styled-components';
 // import Editor from 'components/Board/Editor.js';
 import oc from 'open-color';
 import Editor from './Editor';
+import { postStore } from 'lib/zustand/postStore';
 
 const Container = styled.div`
   width: 100%;
@@ -77,15 +78,7 @@ export interface PostFormProps {
   };
 }
 
-const WriteBoard = ({
-  close,
-  postPosts,
-  user,
-  id,
-  postData,
-  deleteFile,
-  type,
-}: any) => {
+const WriteBoard = ({ close, user, id, postData, deleteFile, type }: any) => {
   const [post, setPost] = useState<PostFormProps>({
     title: '',
     body: '', // text이지만 html
@@ -95,10 +88,11 @@ const WriteBoard = ({
       save: [],
     },
   });
-  const [err, setErr] = useState(null);
+  const [err, setErr] = useState<null | string>(null);
   const [files, setFiles] = useState<null | FileList>(null);
-  const [postCates, setPostCates] = useState();
-  const { userType } = user;
+  // const [postCates, setPostCates] = useState();
+  // const { userType } = user;
+  const { postPosts } = postStore();
 
   useEffect(() => {
     if (!postData) return;
@@ -110,8 +104,6 @@ const WriteBoard = ({
       category,
     });
   }, [postData]);
-
-  console.log(postData);
 
   useEffect(() => {
     setPost({
@@ -157,6 +149,7 @@ const WriteBoard = ({
     }
     formData.append('data', JSON.stringify(post));
     let resArr = await postPosts(id, formData, postData, type);
+
     if (resArr[0]) {
       alert('게시물을 업로드하였습니다 !');
       close();

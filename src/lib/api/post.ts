@@ -10,23 +10,28 @@ export const createPostData = async (data: any) => {
       data,
     });
     return res;
-  } catch (e) {
-    throw e;
+  } catch (e: any) {
+    return e.response;
+    // throw e;
   }
 };
 
 // 카테고리별 게시글 전체 조회
 export const getCategoryPosts = async (type: string) => {
   try {
-    let res;
     if (type === 'data') {
       let data = await axios.get(`/posts/data`);
       let result = await axios.get(`/posts/result`);
-      return (res = { status: 200, data: [result, data] });
+      console.log(data, result);
+      if (data.status === 200 && result.status === 200) {
+        return [...result.data.reverse(), ...data.data.reverse()];
+      } else return null;
     } else {
-      res = await axios.get(`/posts/${type}`);
+      const typeRes = await axios.get(`/posts/${type}`);
+      if (typeRes.status === 200) {
+        return typeRes.data.reverse();
+      } else return null;
     }
-    return res;
   } catch (e) {
     throw e;
   }

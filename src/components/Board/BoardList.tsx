@@ -46,6 +46,7 @@ const BoardList = ({ user, type }: BoardUserTypeProps) => {
   const [isWrite, setIsWrite] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { postsList, getPosts } = postStore();
+  console.log(postsList);
 
   useEffect(() => {
     setIsLoading(false);
@@ -75,12 +76,7 @@ const BoardList = ({ user, type }: BoardUserTypeProps) => {
         {/* 스피너 넣기 */}
         {!isLoading && !isWrite && <>Loading...</>}
         {isWrite && (
-          <WriteBoard
-            close={onChangeWrite}
-            // postPosts={postPosts}
-            user={user}
-            type={type}
-          />
+          <WriteBoard close={onChangeWrite} user={user} type={type} />
         )}
         {isLoading && !isWrite && (
           <Table>
