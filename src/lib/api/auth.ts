@@ -1,11 +1,12 @@
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
+import { AuthFormProps } from 'interfaces/User.interface';
 
-export const postSignup = async ({
+export const postSignUp = async ({
   username,
   password,
   companyCode,
   realName,
-}: any) => {
+}: AuthFormProps) => {
   try {
     const res = await axios.post('http://localhost:5000/auth/register', {
       username: username.value,
@@ -15,11 +16,17 @@ export const postSignup = async ({
     });
     return res;
   } catch (e) {
-    return e.response;
+    // const { response } = e as unknown as AxiosError;
+
+    // if (response) {
+    //   throw { status: response.status, data: response.data };
+    // }
+
+    throw e;
   }
 };
 
-export const postLogin = async ({ username, password }) => {
+export const postLogin = async ({ username, password }: AuthFormProps) => {
   try {
     const res = await axios.post(
       '/auth/login',
@@ -33,7 +40,7 @@ export const postLogin = async ({ username, password }) => {
     );
     return res;
   } catch (e) {
-    return e.response;
+    throw e;
   }
 };
 
@@ -44,7 +51,7 @@ export const checkUser = async () => {
     });
     return res;
   } catch (e) {
-    return e.response;
+    throw e;
   }
 };
 
@@ -53,6 +60,6 @@ export const Logout = async () => {
     const res = await axios.post('http://localhost:5000/auth/logout');
     return res;
   } catch (e) {
-    return e.response;
+    throw e;
   }
 };

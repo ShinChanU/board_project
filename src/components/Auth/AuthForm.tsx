@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 import OpenColor from 'open-color';
-import { userStore } from 'lib/zustand/userStore';
+import { userInfoStore, userStore } from 'lib/zustand/userStore';
+import { AuthFormProps } from 'interfaces/User.interface';
 
 const AuthContainer = styled.div`
   /* min-height: 100vh; */
@@ -104,35 +105,34 @@ type SiteObj = {
 
 const siteObj: SiteObj = {
   login: '로그인',
-  signup: '회원가입',
+  signUp: '회원가입',
 };
 
 type TypeProps = {
   type: string;
-  // authForm: any;
+  authForm: AuthFormProps;
 };
 
-const AuthForm = ({ type }: TypeProps) => {
-  // const [listOfForm, setListOfForm] = useState(Object.keys(authForm));
-  // const next = type === 'login' ? 'signup' : 'login';
+const AuthForm = ({ type, authForm }: TypeProps) => {
+  const next = type === 'login' ? 'signUp' : 'login';
   const {
-    // onChangeAuth,
+    onChangeAuth,
     companyCodes,
     initAuthForm,
-    // onSubmitAuth,
+    onSubmitAuth,
     error,
     signUpCheck,
     loginCheck,
-    // checkAuth,
+    checkAuth,
   } = userStore();
-  // const { user } = userInfoStore();
-  // const navigate = useNavigate();
+  const { user } = userInfoStore();
+  const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   if (user) {
-  //     navigate('/');
-  //   }
-  // }, [user, navigate]);
+  useEffect(() => {
+    if (user) {
+      navigate('/');
+    }
+  }, [user, navigate]);
 
   useEffect(() => {
     return () => {
@@ -140,26 +140,26 @@ const AuthForm = ({ type }: TypeProps) => {
     };
   }, [initAuthForm, type]);
 
-  // useEffect(() => {
-  //   if (signupCheck) {
-  //     alert('회원가입이 완료되었습니다.');
-  //     navigate('/login');
-  //     initAuthForm(type);
-  //     return;
-  //   }
-  //   if (loginCheck) {
-  //     alert('로그인이 완료되었습니다.');
-  //     initAuthForm(type);
-  //     checkAuth();
-  //     return;
-  //   }
-  // }, [signupCheck, navigate, initAuthForm, type, checkAuth, loginCheck]);
+  useEffect(() => {
+    if (signUpCheck) {
+      alert('회원가입이 완료되었습니다.');
+      navigate('/login');
+      initAuthForm(type);
+      return;
+    }
+    if (loginCheck) {
+      alert('로그인이 완료되었습니다.');
+      initAuthForm(type);
+      checkAuth();
+      return;
+    }
+  }, [signUpCheck, navigate, initAuthForm, type, checkAuth, loginCheck]);
 
   return (
     <AuthContainer>
       <Container>
         <Title>{siteObj[type]}입니다</Title>
-        {/* <InputContainer>
+        <InputContainer>
           {Object.keys(authForm).map((key: string, i: number) => {
             if (authForm[key].type === 'select') {
               return (
@@ -187,22 +187,18 @@ const AuthForm = ({ type }: TypeProps) => {
                   type={authForm[key].type}
                   value={authForm[key].value}
                   onChange={(e) => onChangeAuth(type, key, e.target.value)}
-                  maxLength={authForm[key].max}
+                  // maxLength={authForm[key].max}
                 />
               );
             }
           })}
-        </InputContainer> */}
-        {/* <Error>{error}</Error> */}
-
-        {/* <Button onClick={() => onSubmitAuth(type)}>{siteObj[type]}</Button> */}
-        {/* <LinkDiv to={`/${next}`}>{siteObj[next]}</LinkDiv> */}
+        </InputContainer>
+        <Error>{error}</Error>
+        <Button onClick={() => onSubmitAuth(type)}>{siteObj[type]}</Button>
+        <LinkDiv to={`/${next}`}>{siteObj[next]}</LinkDiv>
       </Container>
     </AuthContainer>
   );
 };
 
 export default AuthForm;
-
-// https://react.vlpt.us/using-typescript/01-practice.html
-// https://typescript-kr.github.io/pages/tutorials/typescript-in-5-minutes.html
