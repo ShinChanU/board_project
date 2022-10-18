@@ -1,8 +1,27 @@
 import create from 'zustand';
-import * as postAPI from 'lib/api/post.js';
+import * as postAPI from 'lib/api/post';
 import { persist } from 'zustand/middleware';
+import { BoardDetailDataProps } from 'interfaces/Board.interface';
+import { StringProps } from 'interfaces/User.interface';
 
-export const postStore = create(
+interface PostProps {
+  postsList: [] | BoardDetailDataProps[];
+  postCate: StringProps;
+  getDetailPost: (
+    category: string,
+    id: string,
+  ) => Promise<BoardDetailDataProps | null>;
+  getPosts: (type: string) => void;
+  removePost: (type: string, id: string) => Promise<boolean>;
+  postPosts: (
+    id: string,
+    formData: FormData,
+    postData: BoardDetailDataProps,
+    type: string,
+  ) => Promise<[boolean, string?]>;
+}
+
+export const postStore = create<PostProps, any>(
   persist(
     (set, get) => ({
       // 게시판에 보여줄 게시글들
@@ -19,28 +38,29 @@ export const postStore = create(
       getDetailPost: async (category, id) => {
         const res = await postAPI.getPost(category, id);
         if (res.status === 200) return res.data;
-        else return 0;
+        else return null;
       },
 
       // 메뉴별 게시글 전체 조회
       getPosts: async (type) => {
-        const res = await postAPI.getPosts(type);
+        const res = await postAPI.getCategoryPosts(type);
         if (res.status === 200) set({ postsList: res.data.reverse() });
-        return res;
+        // console.log(res);
+        // return res;
       },
 
-      removePost: async (id) => {
+      removePost: async (type: string, id: string) => {
         const res = await postAPI.delPostData(id);
         if (res.status === 200) {
-          set({ postList: get().postsList.filter((post) => post._id !== id) });
-          return 1;
+          get().getPosts(type);
+          return true;
         } else {
           console.log('데이터 삭제 실패');
-          return 0;
+          return false;
         }
       },
 
-      postPosts: async (id, data, postData) => {
+      postPosts: async (id, data, postData, type) => {
         let res;
         if (!id) {
           res = await postAPI.createPostData(data);
@@ -49,12 +69,12 @@ export const postStore = create(
           res = await postAPI.updatePostData(id, data, saveFiles);
         }
         if (res.status === 200) {
-          get().getPosts();
-          return [1];
+          get().getPosts(type);
+          return [true];
         } else if (res.status === 400) {
-          return [0, res.data.message];
+          return [false, res.data.message];
         } else {
-          return [0, 'Error 발생'];
+          return [false, 'Error 발생'];
         }
       },
     }),

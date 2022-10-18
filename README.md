@@ -1,3 +1,3 @@
-last Update: 221017
+last Update: 221018
 --
-React + Javascript => React + Typescript로 변환 중
+React + Javascript => React + Typescript로 변환 완료

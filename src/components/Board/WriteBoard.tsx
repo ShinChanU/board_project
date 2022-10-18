@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import Editor from 'components/Board/Editor.js';
+// import Editor from 'components/Board/Editor.js';
 import oc from 'open-color';
+import Editor from './Editor';
 
 const Container = styled.div`
   width: 100%;
@@ -66,6 +67,16 @@ const SaveFiles = styled.div`
   display: flex;
 `;
 
+export interface PostFormProps {
+  title: string;
+  body: string;
+  category: string;
+  delFiles: {
+    org: string[];
+    save: string[];
+  };
+}
+
 const WriteBoard = ({
   close,
   postPosts,
@@ -74,8 +85,8 @@ const WriteBoard = ({
   postData,
   deleteFile,
   type,
-}) => {
-  const [post, setPost] = useState({
+}: any) => {
+  const [post, setPost] = useState<PostFormProps>({
     title: '',
     body: '', // text이지만 html
     category: '',
@@ -85,7 +96,7 @@ const WriteBoard = ({
     },
   });
   const [err, setErr] = useState(null);
-  const [files, setFiles] = useState(undefined);
+  const [files, setFiles] = useState<null | FileList>(null);
   const [postCates, setPostCates] = useState();
   const { userType } = user;
 
@@ -101,6 +112,8 @@ const WriteBoard = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [postData]);
 
+  console.log(postData);
+
   useEffect(() => {
     setPost({
       ...post,
@@ -108,22 +121,22 @@ const WriteBoard = ({
     });
   }, [type]);
 
-  useEffect(() => {
-    if (userType === 'top') {
-      setPostCates({
-        data: '자료 게시판',
-        etc: '자유 게시판',
-      });
-    } else if (userType === 'admin') {
-      setPostCates({
-        notice: '공지사항',
-        etc: '자유 게시판',
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userType]);
+  // useEffect(() => {
+  //   if (userType === 'top') {
+  //     setPostCates({
+  //       data: '자료 게시판',
+  //       etc: '자유 게시판',
+  //     });
+  //   } else if (userType === 'admin') {
+  //     setPostCates({
+  //       notice: '공지사항',
+  //       etc: '자유 게시판',
+  //     });
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [userType]);
 
-  const onChangeValue = (e) => {
+  const onChangeValue = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setErr(null);
 
@@ -133,19 +146,18 @@ const WriteBoard = ({
     });
   };
 
-  const onChangeFiles = (e) => {
+  const onChangeFiles = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFiles(e.target.files);
-    console.log(files, e.target.files);
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     let formData = new FormData();
-    for (let key in files) {
-      formData.append('file', files[key]);
+    for (let val in files) {
+      formData.append('file', val);
     }
     formData.append('data', JSON.stringify(post));
-    let resArr = await postPosts(id, formData, postData);
+    let resArr = await postPosts(id, formData, postData, type);
     if (resArr[0]) {
       alert('게시물을 업로드하였습니다 !');
       close();
@@ -154,7 +166,7 @@ const WriteBoard = ({
     }
   };
 
-  const onClickDelFiles = (i) => {
+  const onClickDelFiles = (i: number) => {
     let tmpOrg = post.delFiles.org.slice();
     let tmpSave = post.delFiles.save.slice();
     tmpOrg.push(postData.orgFileName[i]);
@@ -215,7 +227,7 @@ const WriteBoard = ({
             onChange={onChangeFiles}
           />
           {postData &&
-            postData.orgFileName.map((e, i) => (
+            postData.orgFileName.map((e: any, i: number) => (
               <SaveFiles key={e}>
                 <div key={e}>{e}</div>
                 <input

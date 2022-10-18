@@ -1,7 +1,7 @@
-import React from 'react';
 import styled from 'styled-components';
 import oc from 'open-color';
-import { postStore } from 'lib/zustand/postStore.js';
+import { postStore } from 'lib/zustand/postStore';
+// import { postStore } from 'lib/zustand/postStore.js';
 
 const Container = styled.div`
   max-width: 1300px;
@@ -47,7 +47,13 @@ const Header = styled.h1`
   margin-bottom: 20px;
 `;
 
-const BoardTemplate = ({ children, type, isWrite, onChangeWrite, user }) => {
+const BoardTemplate = ({
+  children,
+  type,
+  isWrite,
+  onChangeWrite,
+  user,
+}: any) => {
   const { postCate } = postStore();
 
   return (
