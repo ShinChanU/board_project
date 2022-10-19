@@ -4,6 +4,7 @@ import styled, { css } from 'styled-components';
 import OpenColor from 'open-color';
 import { userInfoStore, userStore } from 'lib/zustand/userStore';
 import { AuthFormProps } from 'interfaces/User.interface';
+import * as Styled from 'App';
 
 const AuthContainer = styled.div`
   display: flex;
@@ -155,6 +156,7 @@ const AuthForm = ({ type, authForm }: TypeProps) => {
 
   return (
     <AuthContainer>
+      <Styled.Header to="/">WEB Chan_v.01</Styled.Header>
       <Container>
         <Title>{siteObj[type]}입니다</Title>
         <InputContainer>

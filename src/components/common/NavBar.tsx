@@ -84,6 +84,7 @@ const NavBar = () => {
     <Container>
       {!user && (
         <Header>
+          <LinkDiv to="/news">뉴스컬렉터</LinkDiv>
           <LinkDiv to="/login">로그인</LinkDiv>
           <LinkDiv to="/signUp">회원가입</LinkDiv>
         </Header>

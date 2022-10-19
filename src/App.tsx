@@ -5,6 +5,7 @@ import LoginPage from './pages/Auth/LoginPage';
 import NavBar from './components/common/NavBar';
 import SignUpPage from 'pages/Auth/SignUpPage';
 import BoardPage from 'pages/Board/BoardPage';
+import NewsPage from 'pages/Others/NewsPage';
 
 const Container = styled.div`
   min-height: 100vh;
@@ -15,7 +16,7 @@ const Container = styled.div`
   align-items: center;
 `;
 
-const Header = styled(Link)`
+export const Header = styled(Link)`
   text-decoration: none;
   color: black;
   display: flex;
@@ -30,9 +31,10 @@ function App() {
     <Container>
       <Router>
         <NavBar />
-        <Header to="/">엑셀 취합 시스템</Header>
+        {/* <Header to="/">WEB Chan_v.01</Header> */}
         <Routes>
           <Route path="/" element={<BoardPage type="notice" />} />
+          <Route path="/news" element={<NewsPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signUp" element={<SignUpPage />} />
           <Route path="/noticeBoard/*" element={<BoardPage type="notice" />} />

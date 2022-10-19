@@ -1,11 +1,21 @@
 import App from './App';
-import { render, screen } from '@testing-library/react';
+import { render, screen, renderHook, waitFor } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { useNewsQueryHook } from 'lib/api/useNewsQueryHook';
+
+const queryClient = new QueryClient();
+
+const wrapper = ({ children }: any) => (
+  <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+);
 
 describe('<App  />', () => {
   it('App 렌더시 Navbar 렌더', async () => {
     render(<App />);
-    expect(screen.getAllByText(/로그인/i)[0]).toBeInTheDocument();
-    expect(screen.getAllByText(/회원가입/i)[0]).toBeInTheDocument();
-    expect(screen.getAllByText(/로그인입니다/i)[0]).toBeInTheDocument();
+  });
+
+  it('get React-query', async () => {
+    const { result } = renderHook(() => useNewsQueryHook(), { wrapper });
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
   });
 });
