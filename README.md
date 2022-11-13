@@ -54,9 +54,10 @@
 
 ---
 
-프로세스 정의서:
+- 프로세스 정의서:
 <img src="https://user-images.githubusercontent.com/76439533/201533724-d325cf35-f146-4261-b3d2-ff0e126a9155.png" width="400" height=""/>
-ERD: https://www.erdcloud.com/d/JdGu6EmjDzsqPSG9T
+
+- ERD: https://www.erdcloud.com/d/JdGu6EmjDzsqPSG9T
 
 ###### Thanks
 
