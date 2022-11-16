@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 import OpenColor from 'open-color';
@@ -6,7 +6,6 @@ import { userInfoStore, userStore } from 'lib/zustand/userStore';
 import { AuthFormProps } from 'interfaces/User.interface';
 
 const AuthContainer = styled.div`
-  /* min-height: 100vh; */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -187,7 +186,6 @@ const AuthForm = ({ type, authForm }: TypeProps) => {
                   type={authForm[key].type}
                   value={authForm[key].value}
                   onChange={(e) => onChangeAuth(type, key, e.target.value)}
-                  // maxLength={authForm[key].max}
                 />
               );
             }

@@ -123,6 +123,3 @@ authRouter.route('/logout').post((req, res) => {
 });
 
 export default authRouter;
-
-// 0802 working
-// https://www.geeksforgeeks.org/login-form-using-node-js-and-mongodb/

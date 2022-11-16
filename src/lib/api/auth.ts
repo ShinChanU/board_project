@@ -28,19 +28,14 @@ export const postSignUp = async ({
 
 export const postLogin = async ({ username, password }: AuthFormProps) => {
   try {
-    const res = await axios.post(
-      '/auth/login',
-      {
-        username: username.value,
-        password: password.value,
-      },
-      {
-        withCredentials: true,
-      },
-    );
+    const res = await axios.post('/auth/login', {
+      username: username.value,
+      password: password.value,
+    });
+    console.log(res);
     return res;
-  } catch (e) {
-    throw e;
+  } catch (e: any) {
+    return e.response;
   }
 };
 

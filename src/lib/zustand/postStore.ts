@@ -45,8 +45,6 @@ export const postStore = create<PostProps, any>(
       getPosts: async (type) => {
         const res = await postAPI.getCategoryPosts(type);
         if (res.status === 200) set({ postsList: res.data.reverse() });
-        // console.log(res);
-        // return res;
       },
 
       removePost: async (type: string, id: string) => {

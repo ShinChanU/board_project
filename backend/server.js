@@ -1,4 +1,3 @@
-require('dotenv').config();
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
@@ -7,6 +6,7 @@ import bodyParser from 'body-parser';
 import jwtMiddleware from './lib/jwtMiddleware.js';
 import postsRouter from './router/posts.js';
 import authRouter from './router/auth.js';
+require('dotenv').config();
 
 const { ATLAS_URI } = process.env;
 

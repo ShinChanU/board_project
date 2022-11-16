@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 import {
@@ -18,7 +18,6 @@ const Container = styled.div`
   background: white;
   border: 2px solid ${oc.indigo[1]};
   border-radius: 10px;
-  /* padding: 0px 40px; */
 
   margin: 20px 0px;
   > div {
@@ -26,24 +25,8 @@ const Container = styled.div`
   }
 `;
 
-const Contents = styled.div`
-  /* width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center; */
-`;
-
-const Header = styled.div`
-  display: flex;
-  justify-content: space-between;
-  margin: 20px 0px;
-  align-items: center;
-  width: 100%;
-`;
-
 const Title = styled.div`
   margin: 20px 0px;
-  /* flex: 1; */
   font-size: 24px;
   font-weight: 550;
   text-align: center;
@@ -53,13 +36,10 @@ const Sub = styled.div`
   font-weight: 400;
   font-size: 13px;
   width: 100%;
-  /* display: flex; */
-  /* flex-direction: column; */
-  /* justify-content: right; */
   padding: 0px 40px;
+  margin: 20px 0px;
 
   div {
-    /* text-align: right; */
     width: auto;
   }
   span {
@@ -73,13 +53,9 @@ const Body = styled.div`
   margin: 20px 0px;
 
   > div {
-    /* text-align: center; */
     padding: 20px 20px;
-
     width: 100%;
     overflow: auto;
-    /* border: 1px solid black; */
-    /* border-radius: 10px; */
   }
 `;
 
@@ -215,7 +191,6 @@ const BoardDetail = ({ user, type }: BoardUserTypeProps) => {
       )}
       {!isWrite && post && (
         <Container>
-          {/* <Header> */}
           <Title>{post.title}</Title>
           <Sub>
             <div>
@@ -240,7 +215,6 @@ const BoardDetail = ({ user, type }: BoardUserTypeProps) => {
               <span>조회수</span> {post.views}
             </div>
           </Sub>
-          {/* </Header> */}
           {post.body && (
             <Body>
               <div dangerouslySetInnerHTML={{ __html: post.body }} />
@@ -280,5 +254,3 @@ const BoardDetail = ({ user, type }: BoardUserTypeProps) => {
 };
 
 export default BoardDetail;
-
-// https://developer-talk.tistory.com/328

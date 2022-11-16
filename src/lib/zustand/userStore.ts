@@ -137,9 +137,12 @@ export const userStore = create<UserStoreProps>((set, get) => ({
     if (form === 'login') {
       formState = get().login;
       const res = await authAPI.postLogin(formState);
+
       if (res.status === 200) {
         userInfoStore.setState({ user: res.data });
         set({ loginCheck: true });
+      } else if (res.status === 504) {
+        set({ error: '서버와 연결 되어있지 않습니다.' });
       } else set({ error: res.data.message });
       return;
     } else {

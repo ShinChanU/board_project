@@ -40,7 +40,6 @@ interface ArticleProps {
 
 const Article = ({ post, idx, type }: ArticleProps) => {
   const navigate = useNavigate();
-  console.log(post);
   const { category, author, createdAt, views, title } = post;
 
   const onClick = () => {

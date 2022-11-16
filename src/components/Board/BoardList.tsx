@@ -1,15 +1,11 @@
-// import { postStore } from 'lib/zustand/postStore.js';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-// import Article from './Article.js';
 import oc from 'open-color';
 import { postStore } from 'lib/zustand/postStore';
 import BoardTemplate from './BoardTemplate';
 import WriteBoard from './WriteBoard';
 import Article from './Article';
 import { BoardUserTypeProps } from 'interfaces/Board.interface';
-// import WriteBoard from './WriteBoard.js';
-// import NoticeTemplate from './BoardTemplate.js';
 
 const columns = ['번호', '분류', '작성자', '제목', '등록일', '조회수'];
 
@@ -75,12 +71,7 @@ const BoardList = ({ user, type }: BoardUserTypeProps) => {
         {/* 스피너 넣기 */}
         {!isLoading && !isWrite && <>Loading...</>}
         {isWrite && (
-          <WriteBoard
-            close={onChangeWrite}
-            // postPosts={postPosts}
-            user={user}
-            type={type}
-          />
+          <WriteBoard close={onChangeWrite} user={user} type={type} />
         )}
         {isLoading && !isWrite && (
           <Table>

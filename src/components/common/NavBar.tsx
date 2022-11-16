@@ -3,7 +3,7 @@ import styled, { css } from 'styled-components';
 import oc from 'open-color';
 import { userInfoStore, userStore } from 'lib/zustand/userStore';
 
-const Container = styled.div`
+const Container = styled.nav`
   width: 100%;
   background: ${oc.indigo[0]};
   padding: 0px 30px;
