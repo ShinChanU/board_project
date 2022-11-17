@@ -4,8 +4,9 @@ import cors from 'cors';
 import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
 import jwtMiddleware from './lib/jwtMiddleware.js';
-import excelPostsRouter from './router/excelPosts.js';
 import authRouter from './router/auth.js';
+import boardRouter from './router/board.js';
+import blogRouter from './router/blog.js';
 require('dotenv').config();
 
 const { ATLAS_URI } = process.env;
@@ -33,7 +34,8 @@ connection.once('open', () => {
   console.log('MongoDB database connection established successfully');
 });
 
-app.use('/posts', excelPostsRouter);
+app.use('/blog', blogRouter);
+app.use('/board', boardRouter);
 app.use('/auth', authRouter);
 
 app.listen(port, () => {

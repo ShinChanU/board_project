@@ -1,12 +1,10 @@
-import express from 'express';
 import Post from '../models/post.models.js';
-import XlsxFile from '../models/xlsxFile.models.js';
 import multer from 'multer';
 import path from 'path';
 import XLSX from 'xlsx';
+import XlsxFile from '../models/xlsxFile.models.js';
 import iconv from 'iconv-lite';
-
-const excelPostsRouter = express.Router();
+import CompanySales from '../models/companySales.model.js';
 
 // 양식으로 지정된 컬럼값들
 const excelStandardCol = [
@@ -18,6 +16,21 @@ const excelStandardCol = [
   '영업이익(만원)',
   '순수익(만원)',
 ];
+
+// 한국 날짜 저장 함수
+const getCurrentDate = () => {
+  let date = new Date();
+  let year = date.getFullYear();
+  let month = date.getMonth();
+  let today = date.getDate();
+  let hours = date.getHours();
+  let minutes = date.getMinutes();
+  let seconds = date.getSeconds();
+  let milliseconds = date.getMilliseconds();
+  return new Date(
+    Date.UTC(year, month, today, hours, minutes, seconds, milliseconds),
+  );
+};
 
 const typeCheck = (val, type) => {
   return typeof val === type ? 1 : 0;
@@ -32,6 +45,24 @@ const excelDataFilter = (json) => {
   }
   return 1;
 };
+
+// 토큰 정보 검증
+const checkJwt = (res) => {
+  const { user } = res;
+  if (!user) return 0;
+  return user;
+};
+
+// 엑셀 업로드 미들웨어
+const upload = multer({
+  dest: 'upload/',
+  fileFilter: (req, file, callback) => {
+    let ext = path.extname(file.originalname);
+    if (ext !== '.xlsx' && ext !== '.xls')
+      return callback(new Error('엑셀파일만 첨부가능합니다.'));
+    callback(null, true);
+  },
+}).any();
 
 // userType별 권한 부여
 const userAuthority = {
@@ -60,41 +91,7 @@ const checkAuthority = (userType, category, crudType) => {
   return userAuthority[userType][category].includes(crudType);
 };
 
-// 엑셀 업로드 미들웨어
-const upload = multer({
-  dest: 'upload/',
-  fileFilter: (req, file, callback) => {
-    let ext = path.extname(file.originalname);
-    if (ext !== '.xlsx' && ext !== '.xls')
-      return callback(new Error('엑셀파일만 첨부가능합니다.'));
-    callback(null, true);
-  },
-}).any();
-
-// 한국 날짜 저장 함수
-const getCurrentDate = () => {
-  let date = new Date();
-  let year = date.getFullYear();
-  let month = date.getMonth();
-  let today = date.getDate();
-  let hours = date.getHours();
-  let minutes = date.getMinutes();
-  let seconds = date.getSeconds();
-  let milliseconds = date.getMilliseconds();
-  return new Date(
-    Date.UTC(year, month, today, hours, minutes, seconds, milliseconds),
-  );
-};
-
-// 토큰 정보 검증
-const checkJwt = (res) => {
-  const { user } = res;
-  if (!user) return 0;
-  return user;
-};
-
-// 게시글 타입별 조회(공지, 게시글, 기타)
-excelPostsRouter.route('/:category').get((req, res) => {
+export const getAllBoardPosts = async (req, res) => {
   const resJwt = checkJwt(res);
   if (resJwt) {
     const { userType } = resJwt;
@@ -108,64 +105,27 @@ excelPostsRouter.route('/:category').get((req, res) => {
     }
   }
   return 0;
-});
+};
 
-//  db에서 엑셀 데이터를 찾아 json 으로 전송
-excelPostsRouter.route('/download/:id').get(async (req, res) => {
-  XlsxFile.find({ fileName: req.params.id })
-    .then((file) => {
-      return res.status(200).json({
-        data: file[0].data,
-      });
+export const getDetailBoardPosts = async (req, res) => {
+  const resJwt = checkJwt(res);
+  if (!resJwt) {
+    res.status(401).send({
+      message: 'user 정보가 없습니다.',
+    });
+    return;
+  }
+
+  Post.findById(req.params.id)
+    .then((post) => {
+      post.views++;
+      post.save();
+      return res.json(post);
     })
     .catch((err) => res.status(400).json('Error: ' + err));
-});
+};
 
-//  db에서 취합 자료 생성 후 전송
-excelPostsRouter.route('/download/result/:date').get(async (req, res) => {
-  // data => "year_number-mon" or "year_number-quarter"
-  const { date } = req.params;
-  const [yyyymm, cycle] = date.split('-');
-  const [year, month] = yyyymm.split('_');
-  let result = [];
-  if (cycle === 'mon') {
-    CompanySales.find().then((data) => {
-      data.forEach((comData) => {
-        let exist = 0;
-        const { companyCode, companyName } = comData;
-        let obj = {
-          회사코드: companyCode,
-          회사명: companyName,
-        };
-        comData.sales.forEach((sale) => {
-          if (sale.year === +year && sale.month === +month) {
-            exist = 1;
-            obj['년도(yyyy)'] = sale.year;
-            obj['월(mm)'] = sale.month;
-            obj['매출액(만원)'] = sale.revenue;
-            obj['영업이익(만원)'] = sale.operatingIncome;
-            obj['순수익(만원)'] = sale.netIncome;
-          }
-        });
-        if (exist) result.push(obj);
-      });
-      result.sort((a, b) => {
-        return a.회사코드 - b.회사코드;
-      });
-      res.send({
-        data: result,
-      });
-    });
-  } else {
-    res.status(400).send({
-      message: '잘못된 요청입니다.',
-      config: 'number + cycle 형식, 1-quarter(1분기), 2-mon (2월)',
-    });
-  }
-});
-
-// 게시글 생성(모든 타입에 해당)
-excelPostsRouter.route('/').post(async (req, res) => {
+export const createBoardPosts = async (req, res) => {
   const resJwt = checkJwt(res);
   if (!resJwt) {
     res.status(401).send({
@@ -180,6 +140,7 @@ excelPostsRouter.route('/').post(async (req, res) => {
   let reqSaveFiles = [];
   let excelData = [];
   let resFlag = 0;
+
   try {
     upload(req, res, async function (err) {
       const { title, body, category } = JSON.parse(req.body.data);
@@ -397,29 +358,9 @@ excelPostsRouter.route('/').post(async (req, res) => {
     });
     return;
   }
-});
+};
 
-// 게시글 세부 조회 (카테고리, id로 접근)
-excelPostsRouter.route('/:category/:id').get((req, res) => {
-  const resJwt = checkJwt(res);
-  if (!resJwt) {
-    res.status(401).send({
-      message: 'user 정보가 없습니다.',
-    });
-    return;
-  }
-
-  Post.findById(req.params.id)
-    .then((post) => {
-      post.views++;
-      post.save();
-      return res.json(post);
-    })
-    .catch((err) => res.status(400).json('Error: ' + err));
-});
-
-// 게시글 삭제 (자기것만, 관리자 제외)
-excelPostsRouter.route('/:id').delete((req, res) => {
+export const deleteBoardPosts = async (req, res) => {
   const resJwt = checkJwt(res);
   if (!resJwt) {
     res.status(401).send({
@@ -504,10 +445,9 @@ excelPostsRouter.route('/:id').delete((req, res) => {
       .catch((err) => res.status(400).json('Error: ' + err));
     return;
   }
-});
+};
 
-// 게시글 수정 (자기 것만, admin은 제외)
-excelPostsRouter.route('/:id').post((req, res) => {
+export const updateBoardPosts = async (req, res) => {
   const resJwt = checkJwt(res);
   if (!resJwt) {
     res.status(401).send({
@@ -634,6 +574,56 @@ excelPostsRouter.route('/:id').post((req, res) => {
     });
     return;
   }
-});
+};
 
-export default excelPostsRouter;
+export const getExcelData = async (req, res) => {
+  XlsxFile.find({ fileName: req.params.id })
+    .then((file) => {
+      return res.status(200).json({
+        data: file[0].data,
+      });
+    })
+    .catch((err) => res.status(400).json('Error: ' + err));
+};
+
+export const getTotalExcelData = async (req, res) => {
+  // data => "year_number-mon" or "year_number-quarter"
+  const { date } = req.params;
+  const [yyyymm, cycle] = date.split('-');
+  const [year, month] = yyyymm.split('_');
+  let result = [];
+  if (cycle === 'mon') {
+    CompanySales.find().then((data) => {
+      data.forEach((comData) => {
+        let exist = 0;
+        const { companyCode, companyName } = comData;
+        let obj = {
+          회사코드: companyCode,
+          회사명: companyName,
+        };
+        comData.sales.forEach((sale) => {
+          if (sale.year === +year && sale.month === +month) {
+            exist = 1;
+            obj['년도(yyyy)'] = sale.year;
+            obj['월(mm)'] = sale.month;
+            obj['매출액(만원)'] = sale.revenue;
+            obj['영업이익(만원)'] = sale.operatingIncome;
+            obj['순수익(만원)'] = sale.netIncome;
+          }
+        });
+        if (exist) result.push(obj);
+      });
+      result.sort((a, b) => {
+        return a.회사코드 - b.회사코드;
+      });
+      res.send({
+        data: result,
+      });
+    });
+  } else {
+    res.status(400).send({
+      message: '잘못된 요청입니다.',
+      config: 'number + cycle 형식, 1-quarter(1분기), 2-mon (2월)',
+    });
+  }
+};
