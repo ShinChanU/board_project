@@ -5,14 +5,7 @@ import OpenColor from 'open-color';
 import { userInfoStore, userStore } from 'lib/zustand/userStore';
 import { AuthFormProps } from 'interfaces/User.interface';
 
-const AuthContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background: ${OpenColor.indigo[1]};
-`;
-
-const Container = styled.div`
+const AuthContainer = styled.main`
   margin-top: 70px;
   background: ${OpenColor.gray[1]};
   border-radius: 10px;
@@ -26,6 +19,10 @@ const Container = styled.div`
   @media screen and (max-width: 768px) {
     width: 80vw;
   }
+`;
+
+const Form = styled.form`
+  width: 100%;
 `;
 
 const Title = styled.header`
@@ -128,9 +125,7 @@ const AuthForm = ({ type, authForm }: TypeProps) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (user) {
-      navigate('/');
-    }
+    if (user) navigate('/');
   }, [user, navigate]);
 
   useEffect(() => {
@@ -156,8 +151,13 @@ const AuthForm = ({ type, authForm }: TypeProps) => {
 
   return (
     <AuthContainer>
-      <Container>
-        <Title>{siteObj[type]}입니다</Title>
+      <Title>{siteObj[type]}</Title>
+      <Form
+        onSubmit={(e) => {
+          e.preventDefault();
+          onSubmitAuth(type);
+        }}
+      >
         <InputContainer>
           {Object.keys(authForm).map((key: string, i: number) => {
             if (authForm[key].type === 'select') {
@@ -192,9 +192,9 @@ const AuthForm = ({ type, authForm }: TypeProps) => {
           })}
         </InputContainer>
         <Error>{error}</Error>
-        <Button onClick={() => onSubmitAuth(type)}>{siteObj[type]}</Button>
-        <LinkDiv to={`/${next}`}>{siteObj[next]}</LinkDiv>
-      </Container>
+        <Button>{siteObj[type]}</Button>
+      </Form>
+      <LinkDiv to={`/${next}`}>{siteObj[next]}</LinkDiv>
     </AuthContainer>
   );
 };

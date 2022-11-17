@@ -48,7 +48,10 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "client": "npm start",
+    "server": "nodemon backend/index.js",
+    "dev": "concurrently \"npm  run client\" \"npm run server\""
   },
   "eslintConfig": {
     "extends": [
@@ -74,6 +77,7 @@
     "@types/styled-components": "^5.1.26",
     "@typescript-eslint/eslint-plugin": "^5.38.0",
     "@typescript-eslint/parser": "^5.38.0",
+    "concurrently": "^7.5.0",
     "eslint": "^8.23.1",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.2.1",

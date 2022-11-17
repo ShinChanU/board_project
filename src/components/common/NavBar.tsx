@@ -6,7 +6,7 @@ import { userInfoStore, userStore } from 'lib/zustand/userStore';
 const Container = styled.nav`
   width: 100%;
   background: ${oc.indigo[0]};
-  padding: 0px 30px;
+  /* padding: 0px 30px; */
 `;
 
 const Header = styled.header<any>`
@@ -18,7 +18,7 @@ const Header = styled.header<any>`
 
   max-width: 1300px;
   padding: 10px 0px;
-  height: 40px;
+  height: 60px;
   align-items: center;
 
   ${(props) =>
@@ -71,7 +71,9 @@ const NavBar = () => {
       {!user && (
         <Header>
           <LinkDiv to="/login">로그인</LinkDiv>
-          <LinkDiv to="/signUp">회원가입</LinkDiv>
+          <LinkDiv to="/signUp" style={{ marginRight: '20px' }}>
+            회원가입
+          </LinkDiv>
         </Header>
       )}
       {user && (
@@ -79,7 +81,7 @@ const NavBar = () => {
           <Div>
             <Span>{user.realName}</Span> 님 환영합니다!
           </Div>
-          <div>
+          <div style={{ marginRight: '20px' }}>
             <LinkDiv to="/noticeBoard">📌공지사항</LinkDiv>
             <LinkDiv to="/dataBoard">📈자료취합게시판</LinkDiv>
             <LinkDiv to="/etcBoard">🌟자유게시판</LinkDiv>
