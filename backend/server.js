@@ -4,7 +4,7 @@ import cors from 'cors';
 import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
 import jwtMiddleware from './lib/jwtMiddleware.js';
-import postsRouter from './router/posts.js';
+import excelPostsRouter from './router/excelPosts.js';
 import authRouter from './router/auth.js';
 require('dotenv').config();
 
@@ -33,7 +33,7 @@ connection.once('open', () => {
   console.log('MongoDB database connection established successfully');
 });
 
-app.use('/posts', postsRouter);
+app.use('/posts', excelPostsRouter);
 app.use('/auth', authRouter);
 
 app.listen(port, () => {

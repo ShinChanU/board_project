@@ -92,6 +92,7 @@ const Error = styled.div`
   font-size: 18px;
   font-weight: 450;
   margin-bottom: 20px;
+  text-align: center;
 `;
 
 // key가 string으로 접근은 불가함([key: string]: string)

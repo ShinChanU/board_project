@@ -6,7 +6,7 @@ import path from 'path';
 import XLSX from 'xlsx';
 import iconv from 'iconv-lite';
 
-const postsRouter = express.Router();
+const excelPostsRouter = express.Router();
 
 // 양식으로 지정된 컬럼값들
 const excelStandardCol = [
@@ -94,7 +94,7 @@ const checkJwt = (res) => {
 };
 
 // 게시글 타입별 조회(공지, 게시글, 기타)
-postsRouter.route('/:category').get((req, res) => {
+excelPostsRouter.route('/:category').get((req, res) => {
   const resJwt = checkJwt(res);
   if (resJwt) {
     const { userType } = resJwt;
@@ -111,7 +111,7 @@ postsRouter.route('/:category').get((req, res) => {
 });
 
 //  db에서 엑셀 데이터를 찾아 json 으로 전송
-postsRouter.route('/download/:id').get(async (req, res) => {
+excelPostsRouter.route('/download/:id').get(async (req, res) => {
   XlsxFile.find({ fileName: req.params.id })
     .then((file) => {
       return res.status(200).json({
@@ -122,7 +122,7 @@ postsRouter.route('/download/:id').get(async (req, res) => {
 });
 
 //  db에서 취합 자료 생성 후 전송
-postsRouter.route('/download/result/:date').get(async (req, res) => {
+excelPostsRouter.route('/download/result/:date').get(async (req, res) => {
   // data => "year_number-mon" or "year_number-quarter"
   const { date } = req.params;
   const [yyyymm, cycle] = date.split('-');
@@ -165,7 +165,7 @@ postsRouter.route('/download/result/:date').get(async (req, res) => {
 });
 
 // 게시글 생성(모든 타입에 해당)
-postsRouter.route('/').post(async (req, res) => {
+excelPostsRouter.route('/').post(async (req, res) => {
   const resJwt = checkJwt(res);
   if (!resJwt) {
     res.status(401).send({
@@ -400,7 +400,7 @@ postsRouter.route('/').post(async (req, res) => {
 });
 
 // 게시글 세부 조회 (카테고리, id로 접근)
-postsRouter.route('/:category/:id').get((req, res) => {
+excelPostsRouter.route('/:category/:id').get((req, res) => {
   const resJwt = checkJwt(res);
   if (!resJwt) {
     res.status(401).send({
@@ -419,7 +419,7 @@ postsRouter.route('/:category/:id').get((req, res) => {
 });
 
 // 게시글 삭제 (자기것만, 관리자 제외)
-postsRouter.route('/:id').delete((req, res) => {
+excelPostsRouter.route('/:id').delete((req, res) => {
   const resJwt = checkJwt(res);
   if (!resJwt) {
     res.status(401).send({
@@ -507,7 +507,7 @@ postsRouter.route('/:id').delete((req, res) => {
 });
 
 // 게시글 수정 (자기 것만, admin은 제외)
-postsRouter.route('/:id').post((req, res) => {
+excelPostsRouter.route('/:id').post((req, res) => {
   const resJwt = checkJwt(res);
   if (!resJwt) {
     res.status(401).send({
@@ -636,4 +636,4 @@ postsRouter.route('/:id').post((req, res) => {
   }
 });
 
-export default postsRouter;
+export default excelPostsRouter;
