@@ -33,19 +33,14 @@ function App() {
         <header>
           <Header to="/">Board Project</Header>
         </header>
-        <main>
-          <Routes>
-            <Route path="/" element={<BoardPage type="notice" />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/signUp" element={<SignUpPage />} />
-            <Route
-              path="/noticeBoard/*"
-              element={<BoardPage type="notice" />}
-            />
-            <Route path="/dataBoard/*" element={<BoardPage type="data" />} />
-            <Route path="/etcBoard/*" element={<BoardPage type="etc" />} />
-          </Routes>
-        </main>
+        <Routes>
+          <Route path="/" element={<BoardPage type="notice" />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/signUp" element={<SignUpPage />} />
+          <Route path="/noticeBoard/*" element={<BoardPage type="notice" />} />
+          <Route path="/dataBoard/*" element={<BoardPage type="data" />} />
+          <Route path="/etcBoard/*" element={<BoardPage type="etc" />} />
+        </Routes>
       </Router>
     </Container>
   );

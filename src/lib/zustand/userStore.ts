@@ -137,7 +137,6 @@ export const userStore = create<UserStoreProps>((set, get) => ({
     if (form === 'login') {
       formState = get().login;
       const res = await authAPI.postLogin(formState);
-
       if (res.status === 200) {
         userInfoStore.setState({ user: res.data });
         set({ loginCheck: true });
