@@ -7,6 +7,7 @@ import jwtMiddleware from './lib/jwtMiddleware.js';
 import authRouter from './router/auth.js';
 import boardRouter from './router/board.js';
 import blogRouter from './router/blog.js';
+import downloadRouter from './router/download.js';
 require('dotenv').config();
 
 const { ATLAS_URI } = process.env;
@@ -37,6 +38,7 @@ connection.once('open', () => {
 app.use('/blog', blogRouter);
 app.use('/board', boardRouter);
 app.use('/auth', authRouter);
+app.use('/download', downloadRouter);
 
 app.listen(port, () => {
   console.log(`Server is running on port: ${port}`);

@@ -13,4 +13,16 @@ module.exports = (app) => {
       changeOrigin: true,
     }),
   );
+  app.use(
+    createProxyMiddleware('/board', {
+      target: 'http://localhost:5000',
+      changeOrigin: true,
+    }),
+  );
+  app.use(
+    createProxyMiddleware('/download', {
+      target: 'http://localhost:5000',
+      changeOrigin: true,
+    }),
+  );
 };

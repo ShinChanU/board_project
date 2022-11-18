@@ -1,5 +1,5 @@
 import create from 'zustand';
-import * as postAPI from 'lib/api/post';
+import * as postAPI from 'lib/api/board';
 import { persist } from 'zustand/middleware';
 import { BoardDetailDataProps } from 'interfaces/Board.interface';
 import { StringProps } from 'interfaces/User.interface';
@@ -18,7 +18,7 @@ interface PostProps {
     formData: FormData,
     postData: BoardDetailDataProps,
     type: string,
-  ) => Promise<[boolean, string?]>;
+  ) => Promise<[boolean, string]>;
 }
 
 export const postStore = create<PostProps, any>(
@@ -68,7 +68,7 @@ export const postStore = create<PostProps, any>(
         }
         if (res.status === 200) {
           get().getPosts(type);
-          return [true];
+          return [true, 'test'];
         } else if (res.status === 400) {
           return [false, res.data.message];
         } else {

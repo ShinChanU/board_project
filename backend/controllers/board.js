@@ -93,18 +93,25 @@ const checkAuthority = (userType, category, crudType) => {
 
 export const getAllBoardPosts = async (req, res) => {
   const resJwt = checkJwt(res);
+  const { category } = req.params;
+
   if (resJwt) {
     const { userType } = resJwt;
     if (userType) {
-      Post.find({ category: req.params.category })
-        .then((posts) => res.json(posts))
-        .catch((err) => res.status(400).json('Error: ' + err));
+      let result = await Post.findByCategory(category);
+      res.json(result);
     } else {
-      res.status(401).json('인증된 사용자가 아닙니다.');
+      res.status(401).send({
+        message: 'user 정보가 없습니다.',
+      });
       return 0;
     }
+  } else {
+    res.status(401).send({
+      message: 'user 정보가 없습니다.',
+    });
+    return 0;
   }
-  return 0;
 };
 
 export const getDetailBoardPosts = async (req, res) => {
@@ -113,16 +120,17 @@ export const getDetailBoardPosts = async (req, res) => {
     res.status(401).send({
       message: 'user 정보가 없습니다.',
     });
-    return;
+    return 0;
   }
 
-  Post.findById(req.params.id)
-    .then((post) => {
-      post.views++;
-      post.save();
-      return res.json(post);
-    })
-    .catch((err) => res.status(400).json('Error: ' + err));
+  const { id } = req.params;
+
+  try {
+    let result = await Post.findByPostId(id);
+    return res.json(result);
+  } catch (e) {
+    return res.status(400).json('Error: ' + e);
+  }
 };
 
 export const createBoardPosts = async (req, res) => {
@@ -138,8 +146,6 @@ export const createBoardPosts = async (req, res) => {
 
   let reqOrgFiles = [];
   let reqSaveFiles = [];
-  let excelData = [];
-  let resFlag = 0;
 
   try {
     upload(req, res, async function (err) {
@@ -176,160 +182,19 @@ export const createBoardPosts = async (req, res) => {
 
       if (req.files) {
         for (let i = 0; i < req.files.length; i++) {
-          if (resFlag) return;
           let path = req.files[i].path;
           let workbook = XLSX.readFile(path);
-          let jsonData = XLSX.utils.sheet_to_json(workbook.Sheets['Sheet1']);
-
-          // 엑셀 내용 확인 후 튕겨내기!
-          if (category === 'data') {
-            if (!excelDataFilter(jsonData)) {
-              return res.status(400).json({
-                message: '양식에 맞지 않은 엑셀의 값이 존재합니다.',
-              });
-            }
-          }
-
-          if (jsonData.length === 0) {
-            return res.status(400).json({
-              success: false,
-              message: '엑셀에 데이터가 존재하지않습니다.',
-            });
-          }
+          const sheetName = workbook.SheetNames[0];
+          const firstSheet = workbook.Sheets[sheetName];
+          let jsonData = XLSX.utils.sheet_to_json(firstSheet);
           const xlsxFile = new XlsxFile({
             fileName: req.files[i].filename,
             data: jsonData,
           });
           xlsxFile.save();
           let fileName = iconv.decode(req.files[i].originalname, 'utf-8');
-
           reqSaveFiles.push(req.files[i].filename);
           reqOrgFiles.push(fileName);
-          excelData.push(jsonData);
-        }
-      }
-
-      let resultSalesData = [];
-      let errData = 0;
-
-      if (category === 'data') {
-        // 자료파일일때만 회사 매출액 데이터에 취합
-        // 엑셀 형식 검증(숫자필드가 맞는지, 회사이름 제외)
-        excelData.forEach((file) => {
-          if (errData) return 0;
-          file.forEach((comData) => {
-            if (errData) return 0;
-            let companyCode = comData['회사코드'];
-            let companyName = comData['회사명'];
-            let year = comData['년도(yyyy)'];
-            let month = comData['월(mm)'];
-            let revenue = comData['매출액(만원)'];
-            let operatingIncome = comData['영업이익(만원)'];
-            let netIncome = comData['순수익(만원)'];
-
-            if (
-              typeCheck(companyCode, 'number') *
-                typeCheck(year, 'number') *
-                typeCheck(month, 'number') *
-                typeCheck(revenue, 'number') *
-                typeCheck(operatingIncome, 'number') *
-                typeCheck(netIncome, 'number') ===
-              0
-            ) {
-              errData = 1; // number에 맞지않는 값 존재
-            } else {
-              resultSalesData.push({
-                companyCode,
-                companyName,
-                year,
-                month,
-                revenue,
-                operatingIncome,
-                netIncome,
-              });
-            }
-          });
-        });
-
-        if (errData) {
-          res.status(400).send({
-            message: '엑셀파일에 숫자형식이 일치하지 않는 값이 존재합니다.',
-          });
-          return;
-        }
-
-        // 업로드한 엑셀 파일에 따라 회사 코드 수정
-        for (let comData of resultSalesData) {
-          const {
-            companyCode,
-            companyName,
-            year,
-            month,
-            revenue,
-            operatingIncome,
-            netIncome,
-          } = comData;
-          let resultFileName = `${year}년_${month}월 매출액취합자료.xlsx`;
-
-          Post.findOne({ category: 'result' }).then((post) => {
-            if (!post.saveFileName.includes(resultFileName)) {
-              // 추가
-              post.saveFileName = [...post.saveFileName, resultFileName];
-              post.orgFileName = [...post.orgFileName, resultFileName];
-            }
-            post.save();
-          });
-
-          CompanySales.findOne({ companyCode }).then(async (existData) => {
-            if (existData) {
-              // 회사코드에 대한 정보는 이미 있으면, 년월 데이터만 추가!
-              if (
-                !existData.sales.filter(
-                  (e) => e.year === year && e.month === month,
-                ).length
-              ) {
-                existData.sales = [
-                  ...existData.sales,
-                  {
-                    year,
-                    month,
-                    revenue,
-                    operatingIncome,
-                    netIncome,
-                  },
-                ];
-                await existData.save();
-              } else {
-                // 같은 년월 데이터 입력시 update!
-                let idx;
-                existData.sales.forEach((e, i) => {
-                  if (e.year === year && e.month === month) idx = i;
-                });
-                existData.sales.splice(idx, 1, {
-                  year,
-                  month,
-                  revenue,
-                  operatingIncome,
-                  netIncome,
-                });
-                await existData.save();
-              }
-            } else {
-              // 새로운 회사코드에 대한 sales 데이터 생성
-              const companySales = new CompanySales({
-                companyCode,
-                companyName,
-                sales: {
-                  year,
-                  month,
-                  revenue,
-                  operatingIncome,
-                  netIncome,
-                },
-              });
-              await companySales.save();
-            }
-          });
         }
       }
 
@@ -370,83 +235,37 @@ export const deleteBoardPosts = async (req, res) => {
   }
   const { id } = req.params;
   const { username } = resJwt;
-  if (username === 'admin') {
-    Post.findByIdAndDelete(id)
-      .then((post) => {
-        if (post.category === 'data') {
-          for (let file of post.saveFileName) {
-            XlsxFile.findOne({ fileName: file }).then((xlsx) => {
-              // xlsx.data 를  companySales에서 삭제
-              for (let info of xlsx.data) {
-                CompanySales.findOne({ companyCode: info['회사코드'] }).then(
-                  (comSale) => {
-                    let tmp = 0;
-                    for (let sale of comSale.sales) {
-                      if (
-                        info['월(mm)'] === sale.month &&
-                        info['년도(yyyy)'] === sale.year
-                      ) {
-                        comSale.sales.splice(tmp, 1);
-                      }
-                      tmp++;
-                    }
-                    comSale.save();
-                  },
-                );
-              }
-            });
-          }
-        }
-        return res.json('Post deleted.');
-      })
-      .catch((err) => res.status(400).json('Error: ' + err));
-    return;
-  } else {
-    Post.findById(id)
-      .then((post) => {
-        if (post.category === 'data') {
-          for (let file of post.saveFileName) {
-            XlsxFile.findOne({ fileName: file }).then((xlsx) => {
-              // xlsx.data 를  companySales에서 삭제
-              for (let info of xlsx.data) {
-                CompanySales.findOne({ companyCode: info['회사코드'] }).then(
-                  (comSale) => {
-                    let tmp = 0;
-                    for (let sale of comSale.sales) {
-                      if (
-                        info['월(mm)'] === sale.month &&
-                        info['년도(yyyy)'] === sale.year
-                      ) {
-                        comSale.sales.splice(tmp, 1);
-                      }
-                      tmp++;
-                    }
-                    comSale.save();
-                  },
-                );
-              }
-            });
-          }
-        }
 
-        if (post.author === username) {
-          Post.findByIdAndDelete(id)
-            .then((data) => {
-              return res.json('Post deleted.');
-            })
-            .catch((err) => res.status(400).json('Error: ' + err));
-        } else {
-          res.status(401).send({
-            message: '권한이 없습니다.',
+  Post.find({ _id: id })
+    .then((post) => {
+      if (post[0].author === username || username === 'admin') {
+        for (let file of post[0].saveFileName) {
+          XlsxFile.find({ fileName: file }).then((data) => {
+            data[0].remove();
           });
-          return;
         }
-      })
-      .catch((err) => res.status(400).json('Error: ' + err));
-    return;
-  }
+        post[0].remove();
+        return res.json('Post deleted.');
+      } else
+        res.status(401).send({
+          message: '권한이 없습니다.',
+        });
+    })
+    .catch((err) => res.status(400).json('Error: ' + err));
+  return;
 };
 
+export const getExcelData = async (req, res) => {
+  XlsxFile.find({ fileName: req.params.id })
+    .then((file) => {
+      return res.status(200).json({
+        data: file[0].data,
+      });
+    })
+    .catch((err) => res.status(400).json('Error: ' + err));
+};
+
+// 수정 예정
 export const updateBoardPosts = async (req, res) => {
   const resJwt = checkJwt(res);
   if (!resJwt) {
@@ -573,57 +392,5 @@ export const updateBoardPosts = async (req, res) => {
       message: `업데이트 하지 못했습니다. ${e}`,
     });
     return;
-  }
-};
-
-export const getExcelData = async (req, res) => {
-  XlsxFile.find({ fileName: req.params.id })
-    .then((file) => {
-      return res.status(200).json({
-        data: file[0].data,
-      });
-    })
-    .catch((err) => res.status(400).json('Error: ' + err));
-};
-
-export const getTotalExcelData = async (req, res) => {
-  // data => "year_number-mon" or "year_number-quarter"
-  const { date } = req.params;
-  const [yyyymm, cycle] = date.split('-');
-  const [year, month] = yyyymm.split('_');
-  let result = [];
-  if (cycle === 'mon') {
-    CompanySales.find().then((data) => {
-      data.forEach((comData) => {
-        let exist = 0;
-        const { companyCode, companyName } = comData;
-        let obj = {
-          회사코드: companyCode,
-          회사명: companyName,
-        };
-        comData.sales.forEach((sale) => {
-          if (sale.year === +year && sale.month === +month) {
-            exist = 1;
-            obj['년도(yyyy)'] = sale.year;
-            obj['월(mm)'] = sale.month;
-            obj['매출액(만원)'] = sale.revenue;
-            obj['영업이익(만원)'] = sale.operatingIncome;
-            obj['순수익(만원)'] = sale.netIncome;
-          }
-        });
-        if (exist) result.push(obj);
-      });
-      result.sort((a, b) => {
-        return a.회사코드 - b.회사코드;
-      });
-      res.send({
-        data: result,
-      });
-    });
-  } else {
-    res.status(400).send({
-      message: '잘못된 요청입니다.',
-      config: 'number + cycle 형식, 1-quarter(1분기), 2-mon (2월)',
-    });
   }
 };

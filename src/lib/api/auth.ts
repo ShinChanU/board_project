@@ -32,7 +32,6 @@ export const postLogin = async ({ username, password }: AuthFormProps) => {
       username: username.value,
       password: password.value,
     });
-    console.log(res);
     return res;
   } catch (e: any) {
     return e.response;

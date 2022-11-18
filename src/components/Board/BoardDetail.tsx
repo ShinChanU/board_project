@@ -12,6 +12,7 @@ import BoardTemplate from './BoardTemplate';
 import oc from 'open-color';
 import * as XLSX from 'xlsx';
 import WriteBoard from './WriteBoard';
+import { downloadExcel } from 'lib/api/board';
 
 const Container = styled.div`
   width: 100%;
@@ -129,9 +130,11 @@ const BoardDetail = ({ user, type }: BoardUserTypeProps) => {
         secDate = monCycle.split('월')[0];
         resultDate = `${year}_${secDate}-mon`;
       }
-      res = await axios.get(`/posts/download/result/${resultDate}`);
+      res = await axios.get(`/board/download/result/${resultDate}`);
     } else {
-      res = await axios.get(`/posts/download/${fileId}`);
+      // console.log(fileId);
+      res = await downloadExcel(fileId);
+      // res = await axios.get(`/board/download/${fileId}`);
     }
     if (res) {
       if (res.status === 200) {

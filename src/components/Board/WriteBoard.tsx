@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import oc from 'open-color';
 import Editor from './Editor';
+import { postStore } from 'lib/zustand/postStore';
 
 const Container = styled.div`
   width: 100%;
@@ -78,13 +79,15 @@ export interface PostFormProps {
 
 const WriteBoard = ({
   close,
-  postPosts,
+  // postPosts,
   user,
   id,
   postData,
   deleteFile,
   type,
 }: any) => {
+  const { postPosts } = postStore();
+
   const [post, setPost] = useState<PostFormProps>({
     title: '',
     body: '', // text이지만 html
@@ -94,7 +97,7 @@ const WriteBoard = ({
       save: [],
     },
   });
-  const [err, setErr] = useState(null);
+  const [err, setErr] = useState<null | string>(null);
   const [files, setFiles] = useState<null | FileList>(null);
 
   useEffect(() => {
@@ -108,8 +111,6 @@ const WriteBoard = ({
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [postData]);
-
-  console.log(postData);
 
   useEffect(() => {
     setPost({
@@ -136,9 +137,11 @@ const WriteBoard = ({
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     let formData = new FormData();
-    for (let val in files) {
-      formData.append('file', val);
-    }
+    let n = files?.length ? files.length : 0;
+
+    if (files !== null)
+      for (let i = 0; i < n; i++) formData.append('file', files[i]);
+
     formData.append('data', JSON.stringify(post));
     let resArr = await postPosts(id, formData, postData, type);
     if (resArr[0]) {

@@ -19,6 +19,19 @@ const postSchema = new Schema({
   updatedAt: Date,
 });
 
+// category 별 게시판 불러오기
+postSchema.statics.findByCategory = function (category) {
+  return this.find({ category });
+};
+
+// id에 해당하는 게시글 세부 조회
+postSchema.statics.findByPostId = async function (id) {
+  let post = await this.findById(id);
+  post.views++;
+  post.save();
+  return post;
+};
+
 const Post = mongoose.model('Post', postSchema);
 
 export default Post;
